@@ -15,6 +15,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
+        window = UIWindow(windowScene: windowScene)
+        let mainCoordinator: MainCoordinator = MainCoordinatorImp()
+        window?.rootViewController = mainCoordinator.startApplication()
+        let tracker = Tracker(id: "123", name: "name", color: .darkGray, emoji: "🥭", schedule:[.monday, .friday])
+        let trackers = [tracker, tracker, tracker, tracker, tracker, tracker, tracker]
+        let categoryFirst = TrackerCategory(title: "1", trackers: trackers)
+        let categorySecond = TrackerCategory(title: "2", trackers: trackers)
+        let categories = [categoryFirst, categorySecond]
+        let coordinator = SettingsFlowCoordinator(navCon: UINavigationController(), controllersFactory: ViewControllersFactory())
+        let SettingsVC = TrackerSettingsViewController(coordinator: coordinator, tracker: nil, trackerStyle: .newEvent)
+//        window?.rootViewController = CategoriesViewController(coordinator: coordinator, current: categorySecond, in: [], delegate: SettingsVC)
+        window?.makeKeyAndVisible()
+        window?.overrideUserInterfaceStyle = .light
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
