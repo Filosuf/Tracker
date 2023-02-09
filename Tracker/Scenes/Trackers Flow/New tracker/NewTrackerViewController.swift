@@ -9,34 +9,11 @@ import UIKit
 
 final class NewTrackerViewController: UIViewController {
     // MARK: - Properties
-    var coordinator: SettingsFlowCoordinator
+    private var coordinator: SettingsFlowCoordinator
+    private var rootViewController: TrackerSettingsViewControllerProtocol
 
     private let newHabitButton = CustomButton(title: "Привычка")
     private let newEventButton = CustomButton(title: "Нерегулярное событие")
-
-//    private let newHabitButton: UIButton = {
-//        let button = UIButton()
-//        button.setTitle("Привычка", for: .normal)
-//        button.setTitleColor(.white, for: .normal)
-//        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
-//        button.backgroundColor = .Custom.black
-//        button.layer.cornerRadius = 16
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        button.addTarget(self, action: #selector(newHabit), for: .touchUpInside)
-//        return button
-//    }()
-//
-//    private let newEventButton: UIButton = {
-//        let button = UIButton()
-//        button.setTitle("Нерегулярное событие", for: .normal)
-//        button.setTitleColor(.white, for: .normal)
-//        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
-//        button.backgroundColor = .Custom.black
-//        button.layer.cornerRadius = 16
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        button.addTarget(self, action: #selector(newEvent), for: .touchUpInside)
-//        return button
-//    }()
 
     private let verticalStackView: UIStackView = {
         let stackView = UIStackView()
@@ -47,10 +24,10 @@ final class NewTrackerViewController: UIViewController {
     }()
 
     // MARK: - Initialiser
-    init(coordinator: SettingsFlowCoordinator) {
+    init(coordinator: SettingsFlowCoordinator, rootViewController: TrackerSettingsViewControllerProtocol) {
         self.coordinator = coordinator
+        self.rootViewController = rootViewController
         super.init(nibName: nil, bundle: nil)
-        layout()
     }
 
     required init?(coder: NSCoder) {
@@ -61,23 +38,19 @@ final class NewTrackerViewController: UIViewController {
         super.viewDidLoad()
         title = "Создание трекера"
         view.backgroundColor = .white
+        layout()
         taps()
     }
 
     // MARK: - Methods
-//    @objc private func newHabit() {
-//        coordinator.showTrackerSettings(tracker: nil, isRegular: true)
-//    }
-//
-//    @objc private func newEvent() {
-//        coordinator.showTrackerSettings(tracker: nil, isRegular: false)
-//    }
     private func taps() {
         newHabitButton.tapAction = { [weak self] in
-            self?.coordinator.showTrackerSettings(tracker: nil, isRegular: true)
+            guard let self = self else { return }
+            self.coordinator.showTrackerSettings(trackerStyle: .newHabit, delegate: self.rootViewController)
         }
         newEventButton.tapAction = { [weak self] in
-            self?.coordinator.showTrackerSettings(tracker: nil, isRegular: false)
+            guard let self = self else { return }
+            self.coordinator.showTrackerSettings(trackerStyle: .newEvent, delegate: self.rootViewController)
         }
     }
 

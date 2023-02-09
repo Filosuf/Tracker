@@ -18,8 +18,8 @@ final class SettingsFlowCoordinator {
         self.navCon = navCon
     }
 
-    func showTrackerSettings(tracker: Tracker?, isRegular: Bool) {
-        let vc = controllersFactory.makeTrackerSettingsViewController(coordinator: self, tracker: tracker, isRegular: isRegular)
+    func showTrackerSettings(trackerStyle: TrackerStyle, delegate: TrackerSettingsViewControllerProtocol) {
+        let vc = controllersFactory.makeTrackerSettingsViewController(coordinator: self, trackerStyle: trackerStyle, delegate: delegate)
         navCon.pushViewController(vc, animated: true)
     }
 

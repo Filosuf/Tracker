@@ -47,6 +47,11 @@ final class TrackersViewController: UIViewController {
         mocDebug()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        trackerCollectionView.reloadData()
+    }
+    
     // MARK: - Methods
     private func setBar() {
             navigationItem.searchController = searchBar
@@ -56,7 +61,7 @@ final class TrackersViewController: UIViewController {
         }
 
     @objc private func addTracker() {
-        coordinator.showNewTracker()
+        coordinator.showNewTracker(rootViewController: self)
     }
 
     private func layout() {
@@ -143,5 +148,12 @@ extension TrackersViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         //selected cell
     }
+}
 
+//MARK: - TrackerSettingsViewControllerProtocol
+extension TrackersViewController: TrackerSettingsViewControllerProtocol {
+    func categoriesDidUpdate(with categories: [TrackerCategory]) {
+        self.categories = categories
+        trackerCollectionView.reloadData()
+    }
 }

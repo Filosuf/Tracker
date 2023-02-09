@@ -14,14 +14,16 @@ final class ViewControllersFactory {
         return viewController
     }
 
-    func makeNewTrackerViewController(coordinator: SettingsFlowCoordinator) -> NewTrackerViewController {
-        let viewController = NewTrackerViewController(coordinator: coordinator)
+    func makeNewTrackerViewController(coordinator: SettingsFlowCoordinator, rootViewController: TrackerSettingsViewControllerProtocol) -> NewTrackerViewController {
+        let viewController = NewTrackerViewController(coordinator: coordinator, rootViewController: rootViewController)
         return viewController
     }
 
-    func makeTrackerSettingsViewController(coordinator: SettingsFlowCoordinator, tracker: Tracker?, isRegular: Bool) -> TrackerSettingsViewController {
-        let trackerSettingsStyle = getTrackerSettingsStyle(tracker: tracker, isRegular: isRegular)
-        let viewController = TrackerSettingsViewController(coordinator: coordinator, tracker: tracker, trackerStyle: trackerSettingsStyle)
+    func makeTrackerSettingsViewController(coordinator: SettingsFlowCoordinator,
+                                           trackerStyle: TrackerStyle,
+                                           delegate: TrackerSettingsViewControllerProtocol
+    ) -> TrackerSettingsViewController {
+        let viewController = TrackerSettingsViewController(coordinator: coordinator, trackerStyle: trackerStyle, delegate: delegate)
         return viewController
     }
 
@@ -50,21 +52,5 @@ final class ViewControllersFactory {
     func makeStatsViewController() -> StatsViewController {
         let viewController = StatsViewController()
         return viewController
-    }
-
-    private func getTrackerSettingsStyle(tracker: Tracker?, isRegular: Bool) -> TrackerStyle {
-        if let tracker = tracker {
-            if isRegular {
-                return .editHabit(tracker: tracker)
-            } else {
-                return .editEvent(tracker: tracker)
-            }
-        } else {
-            if isRegular {
-                return .newHabit
-            } else {
-                return .newEvent
-            }
-        }
     }
 }

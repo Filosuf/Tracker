@@ -10,8 +10,8 @@ import UIKit
 enum TrackerStyle {
     case newHabit
     case newEvent
-    case editHabit(tracker: Tracker)
-    case editEvent(tracker: Tracker)
+    case editHabit(tracker: Tracker, currentCategory: TrackerCategory, categories: [TrackerCategory])
+    case editEvent(tracker: Tracker, currentCategory: TrackerCategory, categories: [TrackerCategory])
 }
 
 enum SettingsType: String {
@@ -19,11 +19,17 @@ enum SettingsType: String {
     case schedule = "Расписание"
 }
 
+protocol TrackerSettingsViewControllerProtocol {
+    func categoriesDidUpdate(with categories: [TrackerCategory])
+}
+
 final class TrackerSettingsViewController: UIViewController {
     // MARK: - Properties
     private var coordinator: SettingsFlowCoordinator
-    private let tracker: Tracker?
-    private var category: String?
+    private var delegate: TrackerSettingsViewControllerProtocol
+    private var tracker: Tracker?
+    private var currentCategory: TrackerCategory?
+    private var categories = [TrackerCategory]()
     private let trackerStyle: TrackerStyle
     private var nameTextFieldTop: CGFloat = 0
     private var nameSettingsArray = [SettingsType]()
@@ -57,6 +63,7 @@ final class TrackerSettingsViewController: UIViewController {
         textField.clearButtonMode = .whileEditing
         textField.leftViewMode = UITextField.ViewMode.always
 //        textField.delegate = self
+        textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         textField.leftView = UIView(frame:CGRect(x:0, y:0, width:10, height:textField.frame.height))
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
@@ -74,10 +81,10 @@ final class TrackerSettingsViewController: UIViewController {
     }()
 
     // MARK: - Initialiser
-    init(coordinator: SettingsFlowCoordinator, tracker: Tracker?, trackerStyle: TrackerStyle) {
+    init(coordinator: SettingsFlowCoordinator, trackerStyle: TrackerStyle, delegate: TrackerSettingsViewControllerProtocol) {
         self.coordinator = coordinator
-        self.tracker = tracker
         self.trackerStyle = trackerStyle
+        self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -89,9 +96,12 @@ final class TrackerSettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        saveButton.isEnabled = false
+        updateProperties(with: trackerStyle)
         updateTrackerProperties(tracker: tracker)
         setupNavBar()
         layout()
+        taps()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -99,12 +109,27 @@ final class TrackerSettingsViewController: UIViewController {
         settingsTableView.reloadData()
     }
 
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        settingsTableView.reloadData()
-//    }
-
     // MARK: - Methods
+    ///update properties for edit tracker
+    private func updateProperties(with style: TrackerStyle) {
+        switch trackerStyle {
+        case .newHabit, .newEvent:
+            return
+        case .editHabit(let tracker, let currentCategory, let categories):
+            self.tracker = tracker
+            self.currentCategory = currentCategory
+            self.categories = categories
+        case .editEvent(let tracker, let currentCategory, let categories):
+            self.tracker = tracker
+            self.currentCategory = currentCategory
+            self.categories = categories
+        }
+    }
+
+    @objc private func textFieldDidChange(_ textField: UITextField) {
+        updateSaveButton()
+    }
+
     private func updateTrackerProperties(tracker: Tracker?) {
         guard let tracker = tracker else { return }
 
@@ -147,8 +172,15 @@ final class TrackerSettingsViewController: UIViewController {
         }
     }
 
-    @objc private func cancel() {
-        coordinator.dismissSettings()
+    private func taps() {
+        cancelButton.tapAction = { [weak self] in
+            self?.coordinator.dismissSettings()
+        }
+        saveButton.tapAction = { [weak self] in
+            guard let self = self else { return }
+            self.delegate.categoriesDidUpdate(with: self.categories)
+            self.coordinator.dismissSettings()
+        }
     }
 
     private func scheduleToString(schedule: [DayOfWeek]) -> String {
@@ -163,6 +195,21 @@ final class TrackerSettingsViewController: UIViewController {
             }
         }
         return result
+    }
+
+    private func updateSaveButton() {
+        guard let name = nameTextField.text else { return }
+        if name != "",
+           Array(name).count < 39,
+           currentCategory != nil,
+           !tempTrackerSchedule.isEmpty {
+            saveButton.isEnabled = true
+            saveButton.updateBackground(backgroundColor: .Custom.text)
+        }
+        else {
+            saveButton.isEnabled = false
+            saveButton.updateBackground(backgroundColor: .Custom.gray)
+        }
     }
 
     private func layout() {
@@ -215,7 +262,7 @@ extension TrackerSettingsViewController: UITableViewDataSource {
         cell.textLabel?.text = nameSettingsArray[indexPath.row].rawValue
         var detailText = ""
         if nameSettingsArray[indexPath.row] == .category {
-            detailText = category ?? ""
+            detailText = currentCategory?.title ?? ""
         } else {
             detailText = scheduleToString(schedule: tempTrackerSchedule)
         }
@@ -238,7 +285,7 @@ extension TrackerSettingsViewController: UITableViewDelegate {
         let nameSettings = nameSettingsArray[indexPath.row]
         switch nameSettings {
         case .category:
-            coordinator.showCategories(current: nil, in: [], delegate: self)
+            coordinator.showCategories(current: currentCategory, in: categories, delegate: self)
         case .schedule:
             coordinator.showSchedule(schedule: tempTrackerSchedule, delegate: self)
         }
@@ -249,12 +296,15 @@ extension TrackerSettingsViewController: UITableViewDelegate {
 extension TrackerSettingsViewController: ScheduleViewControllerProtocol {
     func scheduleDidUpdate(schedule: [DayOfWeek]) {
         tempTrackerSchedule = schedule
+        updateSaveButton()
     }
 }
 // MARK: - CategoriesViewControllerProtocol
 extension TrackerSettingsViewController: CategoriesViewControllerProtocol {
-    func categoriesDidUpdate(categories: [TrackerCategory]) {
-
+    func categoriesDidUpdate(selected category: TrackerCategory, in categories: [TrackerCategory]) {
+        currentCategory = category
+        self.categories = categories
+        updateSaveButton()
     }
 }
 

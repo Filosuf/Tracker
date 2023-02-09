@@ -11,7 +11,7 @@ final class CancelButton: UIButton {
 
     var tapAction: (() -> Void)?
 
-    init(title: String = "", titleColor: UIColor = .red, backgroundColor: UIColor? = .white) {
+    init(title: String = "", titleColor: UIColor? = .Custom.red, backgroundColor: UIColor? = .white) {
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         setButton(title: title, titleColor: titleColor, backgroundColor: backgroundColor)
     }
@@ -20,7 +20,7 @@ final class CancelButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setButton(title: String, titleColor: UIColor,  backgroundColor: UIColor?) {
+    private func setButton(title: String, titleColor: UIColor?,  backgroundColor: UIColor?) {
         setTitle(title, for: .normal)
         setTitleColor(titleColor, for: .normal)
         titleLabel?.font = UIFont.systemFont(ofSize: 16)

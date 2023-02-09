@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CategoriesViewControllerProtocol {
-    func categoriesDidUpdate(categories: [TrackerCategory])
+    func categoriesDidUpdate(selected category: TrackerCategory, in categories: [TrackerCategory])
 }
 
 final class CategoriesViewController: UIViewController {
@@ -157,15 +157,10 @@ extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentCategory = categories[indexPath.row]
         tableView.reloadData()
+        delegate.categoriesDidUpdate(selected: categories[indexPath.row], in: categories)
+        coordinator.pop()
     }
 }
-
-//// MARK: - ScheduleViewControllerProtocol
-//extension CategoriesViewController: CategoriesViewControllerProtocol {
-//    func categoriesDidUpdate(categories: [TrackerCategory]) {
-//
-//    }
-//}
 
 //MARK: - CategorySettingsViewControllerProtocol
 extension CategoriesViewController: CategorySettingsViewControllerProtocol {
