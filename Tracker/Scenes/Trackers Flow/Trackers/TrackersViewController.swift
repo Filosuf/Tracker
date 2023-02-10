@@ -12,6 +12,9 @@ final class TrackersViewController: UIViewController {
     // MARK: - Properties
     var coordinator: TrackersFlowCoordinator
     var categories = [TrackerCategory]()
+    var completedTrackers = [TrackerRecord]()
+    var currentDate: Date { datePicker.date }
+
     lazy var searchBar = UISearchController()
 
     private lazy var trackerCollectionView: UICollectionView = {
@@ -26,6 +29,13 @@ final class TrackersViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
         return collectionView
+    }()
+
+    private let datePicker: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        datePicker.preferredDatePickerStyle = .compact
+        datePicker.datePickerMode = .date
+        return datePicker
     }()
 
     // MARK: - Initialiser
@@ -50,18 +60,20 @@ final class TrackersViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         trackerCollectionView.reloadData()
+        print(categories[0].trackers.count)
     }
     
     // MARK: - Methods
     private func setBar() {
-            navigationItem.searchController = searchBar
-            navigationItem.title = "Трекеры"
-            navigationItem.largeTitleDisplayMode = .always
-            navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(addTracker))
-        }
+        navigationItem.searchController = searchBar
+        navigationItem.title = "Трекеры"
+        navigationItem.largeTitleDisplayMode = .always
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(addTracker))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+    }
 
     @objc private func addTracker() {
-        coordinator.showNewTracker(rootViewController: self)
+        coordinator.showNewTracker(rootViewController: self, categories: categories)
     }
 
     private func layout() {
@@ -76,8 +88,8 @@ final class TrackersViewController: UIViewController {
     }
 
     private func mocDebug() {
-        let tracker = Tracker(id: "123", name: "name", color: .darkGray, emoji: "🥭", schedule:[.monday, .friday])
-        let trackers = [tracker, tracker, tracker, tracker, tracker, tracker, tracker]
+        let tracker = Tracker(id: 10, name: "name", color: .darkGray, emoji: "🥭", schedule:[.monday, .friday])
+        let trackers = [tracker, tracker]
         let categoryFirst = TrackerCategory(title: "Доманий уют", trackers: trackers)
         let categorySecond = TrackerCategory(title: "Радостные мелочи", trackers: trackers)
         categories = [categoryFirst, categorySecond]
@@ -98,7 +110,16 @@ extension TrackersViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackersCollectionViewCell.identifier, for: indexPath) as! TrackersCollectionViewCell
         let tracker = categories[indexPath.section].trackers[indexPath.row]
-        cell.setupCell(tracker: tracker, numberOfMarks: 5)
+        let numberOfCompleted = completedTrackers.filter{$0.id == tracker.id}.count
+        cell.setupCell(tracker: tracker, numberOfMarks: numberOfCompleted, isHabit: !tracker.schedule.isEmpty)
+        cell.buttonAction = { [weak self] in
+            guard let self = self else { return }
+
+            let trackerId = self.categories[indexPath.section].trackers[indexPath.row].id
+            let record = TrackerRecord(id: trackerId, date: self.currentDate)
+            self.completedTrackers.append(record)
+            collectionView.reloadItems(at: [indexPath])
+        }
         return cell
     }
 

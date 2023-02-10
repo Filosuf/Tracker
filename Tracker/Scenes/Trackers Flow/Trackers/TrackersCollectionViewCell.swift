@@ -10,6 +10,8 @@ import UIKit
 final class TrackersCollectionViewCell: UICollectionViewCell {
     static let identifier = "TrackersCollectionViewCell"
 
+    var buttonAction: (() -> Void)?
+
     private let colorView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16
@@ -59,7 +61,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .gray
         layout()
     }
 
@@ -67,15 +68,22 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setupCell(tracker: Tracker, numberOfMarks: Int) {
+    func setupCell(tracker: Tracker, numberOfMarks: Int, isHabit: Bool) {
         nameLabel.text = tracker.name
         emojiLabel.text = tracker.emoji
-        numberOfDayLabel.text = "\(numberOfMarks)"
+        if isHabit {
+            numberOfDayLabel.text = String(format: "day".localized, numberOfMarks)
+        } else {
+            numberOfDayLabel.text = String(format: "time".localized, numberOfMarks)
+        }
+//        postViewsLabel.text = String(format: "views".localized, post.views)
         colorView.backgroundColor = tracker.color
+        plusButton.backgroundColor = tracker.color
     }
 
     @objc private func plus() {
         print("Plus tapped")
+        buttonAction?()
     }
 
     private func layout() {

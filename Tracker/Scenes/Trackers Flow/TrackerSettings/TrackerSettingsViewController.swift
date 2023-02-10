@@ -8,8 +8,8 @@
 import UIKit
 
 enum TrackerStyle {
-    case newHabit
-    case newEvent
+    case newHabit(categories: [TrackerCategory])
+    case newEvent(categories: [TrackerCategory])
     case editHabit(tracker: Tracker, currentCategory: TrackerCategory, categories: [TrackerCategory])
     case editEvent(tracker: Tracker, currentCategory: TrackerCategory, categories: [TrackerCategory])
 }
@@ -35,7 +35,7 @@ final class TrackerSettingsViewController: UIViewController {
     private var nameSettingsArray = [SettingsType]()
 
     //Оперируем с отдельными свойствами tracker, для удобства, когда tracker = nil
-    private var tempTrackerId: String?
+    private var tempTrackerId: Double?
     private var tempTrackerName: String?
     private var tempTrackerColor: UIColor?
     private var tempTrackerEmoji: String?
@@ -70,7 +70,7 @@ final class TrackerSettingsViewController: UIViewController {
     }()
 
     private lazy var settingsTableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .grouped)
+        let tableView = UITableView(frame: .zero, style: .plain)
         tableView.backgroundColor = .Custom.actionBackground
         tableView.isScrollEnabled = false
         tableView.layer.cornerRadius = 16
@@ -113,8 +113,10 @@ final class TrackerSettingsViewController: UIViewController {
     ///update properties for edit tracker
     private func updateProperties(with style: TrackerStyle) {
         switch trackerStyle {
-        case .newHabit, .newEvent:
-            return
+        case .newHabit(let categories):
+            self.categories = categories
+        case .newEvent(let categories):
+            self.categories = categories
         case .editHabit(let tracker, let currentCategory, let categories):
             self.tracker = tracker
             self.currentCategory = currentCategory
@@ -127,6 +129,7 @@ final class TrackerSettingsViewController: UIViewController {
     }
 
     @objc private func textFieldDidChange(_ textField: UITextField) {
+        tempTrackerName = textField.text
         updateSaveButton()
     }
 
@@ -162,9 +165,10 @@ final class TrackerSettingsViewController: UIViewController {
             nameSettingsArray = [.category, .schedule]
             saveButton.updateButton(title: "Создать", backgroundColor: .gray)
         case .newEvent:
-            numberOfDayLabel.isHidden = false
-            nameTextFieldTop = 75
+            numberOfDayLabel.isHidden = true
+            nameTextFieldTop = 0
             nameSettingsArray = [.category]
+            saveButton.updateButton(title: "Создать", backgroundColor: .gray)
         case .editHabit:
             title = "Редактирование привычки"
         case .editEvent:
@@ -178,9 +182,27 @@ final class TrackerSettingsViewController: UIViewController {
         }
         saveButton.tapAction = { [weak self] in
             guard let self = self else { return }
+            self.addOrUpdateTracker()
             self.delegate.categoriesDidUpdate(with: self.categories)
             self.coordinator.dismissSettings()
         }
+    }
+
+    private func addOrUpdateTracker() {
+        guard let currentCategory = currentCategory else  { return }
+        let unchangeableTrackers = currentCategory.trackers.filter{$0 != tracker}
+        let id = tempTrackerId ?? Date().timeIntervalSince1970
+        let name = tempTrackerName ?? "default name"
+        let color = tempTrackerColor ?? .systemPink //debug default value
+        let emoji = tempTrackerEmoji ?? "🍏"
+        let newOrEditTracker = Tracker(id: id, name: name, color: color, emoji: emoji, schedule: tempTrackerSchedule)
+
+        let categoryTitle = currentCategory.title
+        categories.removeAll(where: {$0 == currentCategory})
+        var trackers = unchangeableTrackers + [newOrEditTracker]
+        trackers.sort(by: {$0.name < $1.name})
+        let updatedCategory = TrackerCategory(title: categoryTitle, trackers: trackers)
+        categories.append(updatedCategory)
     }
 
     private func scheduleToString(schedule: [DayOfWeek]) -> String {
@@ -201,8 +223,7 @@ final class TrackerSettingsViewController: UIViewController {
         guard let name = nameTextField.text else { return }
         if name != "",
            Array(name).count < 39,
-           currentCategory != nil,
-           !tempTrackerSchedule.isEmpty {
+           currentCategory != nil {
             saveButton.isEnabled = true
             saveButton.updateBackground(backgroundColor: .Custom.text)
         }

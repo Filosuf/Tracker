@@ -40,7 +40,7 @@ final class CategoriesViewController: UIViewController {
     }()
 
     private lazy var categoriesTableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .grouped)
+        let tableView = UITableView(frame: .zero, style: .plain)
         tableView.backgroundColor = .Custom.actionBackground
         tableView.register(CategoriesTableViewCell.self, forCellReuseIdentifier: CategoriesTableViewCell.identifier)
 //        tableView.isScrollEnabled = false

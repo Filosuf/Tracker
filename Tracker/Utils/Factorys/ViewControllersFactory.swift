@@ -14,8 +14,8 @@ final class ViewControllersFactory {
         return viewController
     }
 
-    func makeNewTrackerViewController(coordinator: SettingsFlowCoordinator, rootViewController: TrackerSettingsViewControllerProtocol) -> NewTrackerViewController {
-        let viewController = NewTrackerViewController(coordinator: coordinator, rootViewController: rootViewController)
+    func makeNewTrackerViewController(coordinator: SettingsFlowCoordinator, categories: [TrackerCategory], rootViewController: TrackerSettingsViewControllerProtocol) -> NewTrackerViewController {
+        let viewController = NewTrackerViewController(coordinator: coordinator, categories: categories, rootViewController: rootViewController)
         return viewController
     }
 

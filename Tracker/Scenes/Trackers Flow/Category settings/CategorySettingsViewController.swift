@@ -113,10 +113,3 @@ final class CategorySettingsViewController: UIViewController {
         ])
     }
 }
-
-//MARK: - UITextFieldDelegate
-extension CategorySettingsViewController: UITextFieldDelegate {
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        print(textField.text)
-    }
-}

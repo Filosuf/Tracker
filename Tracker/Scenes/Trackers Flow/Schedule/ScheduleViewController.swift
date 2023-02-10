@@ -21,7 +21,7 @@ final class ScheduleViewController: UIViewController {
     private let okButton = CustomButton(title: "Готово")
 
     private lazy var weekTableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .grouped)
+        let tableView = UITableView(frame: .zero, style: .plain)
         tableView.backgroundColor = .Custom.actionBackground
         tableView.register(ScheduleTableViewCell.self, forCellReuseIdentifier: ScheduleTableViewCell.identifier)
         tableView.isScrollEnabled = false

@@ -8,10 +8,14 @@
 import Foundation
 import UIKit
 
-struct Tracker {
-    let id: String
+struct Tracker: Equatable {
+    let id: Double
     let name: String
     let color: UIColor
     let emoji: String
     let schedule: [DayOfWeek]
+
+    static func == (lhs: Tracker, rhs: Tracker) -> Bool {
+        lhs.id == rhs.id
+    }
 }

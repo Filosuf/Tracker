@@ -9,8 +9,9 @@ import UIKit
 
 final class NewTrackerViewController: UIViewController {
     // MARK: - Properties
-    private var coordinator: SettingsFlowCoordinator
-    private var rootViewController: TrackerSettingsViewControllerProtocol
+    private let coordinator: SettingsFlowCoordinator
+    private let rootViewController: TrackerSettingsViewControllerProtocol
+    private let categories: [TrackerCategory]
 
     private let newHabitButton = CustomButton(title: "Привычка")
     private let newEventButton = CustomButton(title: "Нерегулярное событие")
@@ -24,8 +25,9 @@ final class NewTrackerViewController: UIViewController {
     }()
 
     // MARK: - Initialiser
-    init(coordinator: SettingsFlowCoordinator, rootViewController: TrackerSettingsViewControllerProtocol) {
+    init(coordinator: SettingsFlowCoordinator, categories: [TrackerCategory], rootViewController: TrackerSettingsViewControllerProtocol) {
         self.coordinator = coordinator
+        self.categories = categories
         self.rootViewController = rootViewController
         super.init(nibName: nil, bundle: nil)
     }
@@ -46,11 +48,11 @@ final class NewTrackerViewController: UIViewController {
     private func taps() {
         newHabitButton.tapAction = { [weak self] in
             guard let self = self else { return }
-            self.coordinator.showTrackerSettings(trackerStyle: .newHabit, delegate: self.rootViewController)
+            self.coordinator.showTrackerSettings(trackerStyle: .newHabit(categories: self.categories), delegate: self.rootViewController)
         }
         newEventButton.tapAction = { [weak self] in
             guard let self = self else { return }
-            self.coordinator.showTrackerSettings(trackerStyle: .newEvent, delegate: self.rootViewController)
+            self.coordinator.showTrackerSettings(trackerStyle: .newEvent(categories: self.categories), delegate: self.rootViewController)
         }
     }
 
