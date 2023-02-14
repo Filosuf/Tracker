@@ -15,6 +15,7 @@ final class CategorySettingsViewController: UIViewController {
     // MARK: - Properties
     private let coordinator: SettingsFlowCoordinator
     private var category: TrackerCategory?
+    private let categories: [TrackerCategory]
     private let delegate: CategorySettingsViewControllerProtocol
 
     private var currentCategory: TrackerCategory?
@@ -35,12 +36,23 @@ final class CategorySettingsViewController: UIViewController {
         return textField
     }()
 
+    private let warningLabel: UILabel = {
+        let label = UILabel()
+        label.text = ""
+        label.font = UIFont.systemFont(ofSize: 17)
+        label.textColor = .Custom.red
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
     private let saveButton = CustomButton(title: "Готово")
 
     // MARK: - Initialiser
-    init(coordinator: SettingsFlowCoordinator, category: TrackerCategory?, delegate: CategorySettingsViewControllerProtocol) {
+    init(coordinator: SettingsFlowCoordinator, current category: TrackerCategory?, in categories: [TrackerCategory], delegate: CategorySettingsViewControllerProtocol) {
         self.coordinator = coordinator
         self.category = category
+        self.categories = categories
         self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
     }
@@ -84,16 +96,26 @@ final class CategorySettingsViewController: UIViewController {
     }
 
     @objc private func textFieldDidChange(_ textField: UITextField) {
-        if let text = textField.text {
-            if text != "", Array(text).count < 39 {
-                saveButton.isEnabled = true
-                saveButton.updateBackground(backgroundColor: .Custom.text)
-            }
-            else {
-                saveButton.isEnabled = false
-                saveButton.updateBackground(backgroundColor: .Custom.gray)
-            }
+        guard let text = textField.text else { return }
+        let isFree = categories.map{$0.title == text}.filter({$0 == true}).isEmpty
+
+        if text != "", Array(text).count < 39, isFree {
+            saveButton.isEnabled = true
+            saveButton.updateBackground(backgroundColor: .Custom.text)
         }
+        else {
+            saveButton.isEnabled = false
+            saveButton.updateBackground(backgroundColor: .Custom.gray)
+        }
+
+        if !isFree {
+            warningLabel.text = "Имя категории уже используется"
+        } else if Array(text).count > 38 {
+            warningLabel.text = "Ограничение 38 символов"
+        } else {
+            warningLabel.text = ""
+        }
+
     }
 
     func hideKeyboardWhenTappedAround() {
@@ -108,6 +130,7 @@ final class CategorySettingsViewController: UIViewController {
 
     private func layout() {
         [nameTextField,
+         warningLabel,
          saveButton
         ].forEach { view.addSubview($0)}
 
@@ -116,6 +139,10 @@ final class CategorySettingsViewController: UIViewController {
             nameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             nameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             nameTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+
+            warningLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            warningLabel.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 8),
+            warningLabel.heightAnchor.constraint(equalToConstant: 22),
 
             saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),

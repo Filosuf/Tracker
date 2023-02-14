@@ -85,7 +85,7 @@ final class CategoriesViewController: UIViewController {
     private func taps() {
         addCategoryButton.tapAction = { [weak self] in
             guard let self = self else { return }
-            self.coordinator.showCategorySettings(category: self.currentCategory, delegate: self)
+            self.coordinator.showCategorySettings(current: nil, in: self.categories, delegate: self)
         }
     }
 

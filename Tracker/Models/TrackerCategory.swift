@@ -7,15 +7,11 @@
 
 import Foundation
 
-struct TrackerCategory: Hashable {
+struct TrackerCategory: Equatable {
     let title: String
     let trackers: [Tracker]
 
     static func == (lhs: TrackerCategory, rhs: TrackerCategory) -> Bool {
         lhs.title == rhs.title
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(title)
     }
 }
