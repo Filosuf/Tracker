@@ -97,7 +97,7 @@ final class CategorySettingsViewController: UIViewController {
         } else {
             categoriesUpdated = categories + [TrackerCategory(title: title, trackers: [])]
         }
-        return categoriesUpdated.sorted(by:{$0.title < $1.title})
+        return categoriesUpdated.sorted(by: <)
     }
 
     private func setupView() {

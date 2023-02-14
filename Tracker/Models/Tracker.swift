@@ -18,4 +18,8 @@ struct Tracker: Equatable {
     static func == (lhs: Tracker, rhs: Tracker) -> Bool {
         lhs.id == rhs.id
     }
+
+    static func < (lhs: Tracker, rhs: Tracker) -> Bool {
+        lhs.name < rhs.name
+    }
 }

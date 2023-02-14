@@ -109,7 +109,8 @@ final class TrackersViewController: UIViewController {
     }
 
     @objc private func addTracker() {
-        coordinator.showNewTracker(rootViewController: self, categories: categories)
+        let categoriesSorted = categories.sorted(by: <)
+        coordinator.showNewTracker(rootViewController: self, categories: categoriesSorted)
     }
 
     @objc func handleDatePicker(_ datePicker: UIDatePicker) {
@@ -140,13 +141,15 @@ final class TrackersViewController: UIViewController {
     }
 
     private func updateVisibleCategories() {
-        let categoriesFiltered = categories.map{filterByDateCategory(category: $0)}
+        var categoriesFiltered = categories.map{filterByDateCategory(category: $0)}
+        categoriesFiltered = categoriesFiltered.sorted(by: <)
         visibleCategories = categoriesFiltered
         trackerCollectionView.reloadData()
     }
 
     private func filterByDateCategory(category: TrackerCategory) -> TrackerCategory {
-        let trackers = category.trackers.filter({($0.schedule.contains(where: {$0.dayNumberOfWeek == currentDate.dayNumberOfWeek()}) || $0.schedule.isEmpty) && ($0.name.contains(textOfSearchQuery) || textOfSearchQuery == "")})
+        var trackers = category.trackers.filter({($0.schedule.contains(where: {$0.dayNumberOfWeek == currentDate.dayNumberOfWeek()}) || $0.schedule.isEmpty) && ($0.name.contains(textOfSearchQuery) || textOfSearchQuery == "")})
+        trackers = trackers.sorted(by: <)
         let filterCategory = TrackerCategory(title: category.title, trackers: trackers)
         return filterCategory
     }
