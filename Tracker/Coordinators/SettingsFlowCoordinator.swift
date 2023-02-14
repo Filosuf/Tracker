@@ -35,10 +35,10 @@ final class SettingsFlowCoordinator {
         navCon.pushViewController(vc, animated: true)
     }
 
-    func showCategorySettings(current category: TrackerCategory?,
+    func showCategorySettings(edit category: TrackerCategory?,
                               in categories: [TrackerCategory],
                               delegate: CategorySettingsViewControllerProtocol) {
-        let vc = controllersFactory.makeCategorySettingsViewController(coordinator: self, current: category, in: categories, delegate: delegate)
+        let vc = controllersFactory.makeCategorySettingsViewController(coordinator: self, edit: category, in: categories, delegate: delegate)
         navCon.pushViewController(vc, animated: true)
     }
 

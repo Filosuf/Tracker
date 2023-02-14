@@ -150,16 +150,6 @@ final class TrackersViewController: UIViewController {
         let filterCategory = TrackerCategory(title: category.title, trackers: trackers)
         return filterCategory
     }
-
-    private func mocDebug() {
-        let habit = Tracker(id: 10, name: "Habit", color: .darkGray, emoji: "🥭", schedule: [.tuesday, .friday])
-        let tracker = Tracker(id: 12, name: "name", color: .purple, emoji: "🥭", schedule: [])
-        let trackers = [habit, habit, tracker]
-        let categoryFirst = TrackerCategory(title: "Доманий уют", trackers: trackers)
-        let categorySecond = TrackerCategory(title: "Радостные мелочи", trackers: trackers)
-        categories = [categoryFirst, categorySecond]
-        trackerCollectionView.reloadData()
-    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -183,8 +173,7 @@ extension TrackersViewController: UICollectionViewDataSource {
             let trackerId = self.visibleCategories[indexPath.section].trackers[indexPath.row].id
             let record = TrackerRecord(id: trackerId, date: self.currentDate)
             self.completedTrackers.append(record)
-//            collectionView.reloadItems(at: [indexPath])
-            collectionView.reloadData()
+            collectionView.reloadItems(at: [indexPath])
         }
         return cell
     }
@@ -250,6 +239,7 @@ extension TrackersViewController: TrackerSettingsViewControllerProtocol {
     func categoriesDidUpdate(with categories: [TrackerCategory]) {
         self.categories = categories
         updateVisibleCategories()
+        setupView()
         trackerCollectionView.reloadData()
     }
 }

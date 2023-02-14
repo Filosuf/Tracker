@@ -85,7 +85,7 @@ final class CategoriesViewController: UIViewController {
     private func taps() {
         addCategoryButton.tapAction = { [weak self] in
             guard let self = self else { return }
-            self.coordinator.showCategorySettings(current: nil, in: self.categories, delegate: self)
+            self.coordinator.showCategorySettings(edit: nil, in: self.categories, delegate: self)
         }
     }
 
@@ -182,14 +182,8 @@ extension CategoriesViewController: UITableViewDelegate {
 
 //MARK: - CategorySettingsViewControllerProtocol
 extension CategoriesViewController: CategorySettingsViewControllerProtocol {
-    func categorySettingsDidUpdated(newTitle: String) {
-        var trackers = [Tracker]()
-        if let currentCategory = currentCategory {
-            trackers = currentCategory.trackers
-            categories.removeAll(where: {$0 == currentCategory})
-        }
-        let newOrUpdatedCategory = TrackerCategory(title: newTitle, trackers: trackers)
-        categories.append(newOrUpdatedCategory)
+    func categorySettingsDidUpdated(categories: [TrackerCategory]) {
+        self.categories = categories
     }
 }
 

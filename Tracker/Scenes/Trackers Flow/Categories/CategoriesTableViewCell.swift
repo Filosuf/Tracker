@@ -15,6 +15,7 @@ final class CategoriesTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 17)
         label.textColor = .black
+        label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -51,6 +52,7 @@ final class CategoriesTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate([
             label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: basicSpaceInterval),
+            label.trailingAnchor.constraint(equalTo: checkmarkImage.leadingAnchor, constant: -1),
 
             checkmarkImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -basicSpaceInterval),
             checkmarkImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),

@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CategorySettingsViewControllerProtocol {
-    func categorySettingsDidUpdated(newTitle: String)
+    func categorySettingsDidUpdated(categories: [TrackerCategory])
 }
 
 final class CategorySettingsViewController: UIViewController {
@@ -49,7 +49,7 @@ final class CategorySettingsViewController: UIViewController {
     private let saveButton = CustomButton(title: "Готово")
 
     // MARK: - Initialiser
-    init(coordinator: SettingsFlowCoordinator, current category: TrackerCategory?, in categories: [TrackerCategory], delegate: CategorySettingsViewControllerProtocol) {
+    init(coordinator: SettingsFlowCoordinator, edit category: TrackerCategory?, in categories: [TrackerCategory], delegate: CategorySettingsViewControllerProtocol) {
         self.coordinator = coordinator
         self.category = category
         self.categories = categories
@@ -79,10 +79,25 @@ final class CategorySettingsViewController: UIViewController {
     // MARK: - Methods
     private func taps() {
         saveButton.tapAction = { [weak self] in
-            let newTitle = self?.nameTextField.text ?? ""
-            self?.delegate.categorySettingsDidUpdated(newTitle: newTitle)
-            self?.coordinator.pop()
+            guard let self = self else { return }
+
+            let newTitle = self.nameTextField.text ?? ""
+            let newCategories = self.updateCategories(with: newTitle)
+            self.delegate.categorySettingsDidUpdated(categories: newCategories)
+            self.coordinator.pop()
         }
+    }
+
+    private func updateCategories(with title: String) -> [TrackerCategory] {
+        var categoriesUpdated = [TrackerCategory]()
+        if let category = category {
+            let categoriesFiltered = categories.filter{$0 != category}
+            let categoryUpdated = TrackerCategory(title: title, trackers: category.trackers)
+            categoriesUpdated = categoriesFiltered + [categoryUpdated]
+        } else {
+            categoriesUpdated = categories + [TrackerCategory(title: title, trackers: [])]
+        }
+        return categoriesUpdated.sorted(by:{$0.title < $1.title})
     }
 
     private func setupView() {

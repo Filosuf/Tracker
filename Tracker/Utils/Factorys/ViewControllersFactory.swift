@@ -42,11 +42,11 @@ final class ViewControllersFactory {
     }
 
     func makeCategorySettingsViewController(coordinator: SettingsFlowCoordinator,
-                                            current category: TrackerCategory?,
+                                            edit category: TrackerCategory?,
                                             in categories: [TrackerCategory],
                                             delegate: CategorySettingsViewControllerProtocol
     ) -> CategorySettingsViewController {
-        let viewController = CategorySettingsViewController(coordinator: coordinator, current: category, in: categories, delegate: delegate)
+        let viewController = CategorySettingsViewController(coordinator: coordinator, edit: category, in: categories, delegate: delegate)
         return viewController
     }
 
