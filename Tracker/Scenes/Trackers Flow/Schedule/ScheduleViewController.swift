@@ -22,10 +22,10 @@ final class ScheduleViewController: UIViewController {
 
     private lazy var weekTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
-        tableView.backgroundColor = .Custom.actionBackground
         tableView.register(ScheduleTableViewCell.self, forCellReuseIdentifier: ScheduleTableViewCell.identifier)
         tableView.isScrollEnabled = false
         tableView.layer.cornerRadius = 16
+        tableView.clipsToBounds = true
         tableView.delegate = self
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -78,15 +78,15 @@ final class ScheduleViewController: UIViewController {
         ].forEach { view.addSubview($0) }
 
         NSLayoutConstraint.activate([
-            weekTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            weekTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             weekTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             weekTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            weekTableView.heightAnchor.constraint(equalToConstant: 75 * 7),
 
             okButton.heightAnchor.constraint(equalToConstant: 60),
-            okButton.topAnchor.constraint(equalTo: weekTableView.bottomAnchor, constant: 20),
             okButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             okButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            okButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+            okButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
     }
 }
@@ -116,7 +116,7 @@ extension ScheduleViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension ScheduleViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
+        return 75
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

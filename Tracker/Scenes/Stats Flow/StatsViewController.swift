@@ -9,10 +9,11 @@ import UIKit
 
 final class StatsViewController: UIViewController {
     // MARK: - Properties
+
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .darkGray
+        view.backgroundColor = .white
         navigationItem.title = "Статистика"
     }
 

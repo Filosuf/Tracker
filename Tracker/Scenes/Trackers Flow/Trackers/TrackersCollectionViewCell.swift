@@ -76,13 +76,11 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         } else {
             numberOfDayLabel.text = String(format: "time".localized, numberOfMarks)
         }
-//        postViewsLabel.text = String(format: "views".localized, post.views)
         colorView.backgroundColor = tracker.color
         plusButton.backgroundColor = tracker.color
     }
 
     @objc private func plus() {
-        print("Plus tapped")
         buttonAction?()
     }
 

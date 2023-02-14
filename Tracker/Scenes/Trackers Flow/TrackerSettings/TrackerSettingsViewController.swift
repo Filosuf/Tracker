@@ -32,6 +32,7 @@ final class TrackerSettingsViewController: UIViewController {
     private var categories = [TrackerCategory]()
     private let trackerStyle: TrackerStyle
     private var nameTextFieldTop: CGFloat = 0
+    private var settingsTableViewHeight: CGFloat { CGFloat(nameSettingsArray.count * 75 - 1) }
     private var nameSettingsArray = [SettingsType]()
 
     //Оперируем с отдельными свойствами tracker, для удобства, когда tracker = nil
@@ -62,7 +63,7 @@ final class TrackerSettingsViewController: UIViewController {
         textField.layer.cornerRadius = 16
         textField.clearButtonMode = .whileEditing
         textField.leftViewMode = UITextField.ViewMode.always
-//        textField.delegate = self
+        textField.delegate = self
         textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         textField.leftView = UIView(frame:CGRect(x:0, y:0, width:10, height:textField.frame.height))
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -71,7 +72,6 @@ final class TrackerSettingsViewController: UIViewController {
 
     private lazy var settingsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
-        tableView.backgroundColor = .Custom.actionBackground
         tableView.isScrollEnabled = false
         tableView.layer.cornerRadius = 16
         tableView.delegate = self
@@ -102,6 +102,7 @@ final class TrackerSettingsViewController: UIViewController {
         setupNavBar()
         layout()
         taps()
+        hideKeyboardWhenTappedAround()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -131,6 +132,16 @@ final class TrackerSettingsViewController: UIViewController {
     @objc private func textFieldDidChange(_ textField: UITextField) {
         tempTrackerName = textField.text
         updateSaveButton()
+    }
+
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 
     private func updateTrackerProperties(tracker: Tracker?) {
@@ -256,12 +267,12 @@ final class TrackerSettingsViewController: UIViewController {
             settingsTableView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 16),
             settingsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             settingsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            settingsTableView.heightAnchor.constraint(equalToConstant: 240),
+            settingsTableView.heightAnchor.constraint(equalToConstant: settingsTableViewHeight),
 
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             cancelButton.trailingAnchor.constraint(equalTo: saveButton.leadingAnchor, constant: -8),
             cancelButton.heightAnchor.constraint(equalToConstant: 50),
-            cancelButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant:  -16),
+            cancelButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
 
             saveButton.heightAnchor.constraint(equalTo: cancelButton.heightAnchor),
             saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -291,11 +302,12 @@ extension TrackerSettingsViewController: UITableViewDataSource {
         cell.textLabel?.font = UIFont.systemFont(ofSize: 18)
         cell.accessoryType = .disclosureIndicator
         cell.backgroundColor = .Custom.actionBackground
+        cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         return cell
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
+        return 75
     }
 }
 
@@ -310,6 +322,14 @@ extension TrackerSettingsViewController: UITableViewDelegate {
         case .schedule:
             coordinator.showSchedule(schedule: tempTrackerSchedule, delegate: self)
         }
+    }
+}
+
+//MARK: - UITextFieldDelegate
+extension TrackerSettingsViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        view.endEditing(true)
+        return true
     }
 }
 
@@ -328,23 +348,3 @@ extension TrackerSettingsViewController: CategoriesViewControllerProtocol {
         updateSaveButton()
     }
 }
-
-//(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    // create cell
-//    // ...
-//    if ([self.checkedPath isEqual:indexPath])
-//    {
-//        outCell.accessoryType = UITableViewCellAccessoryCheckmark;
-//    }
-//    else
-//    {
-//        outCell.accessoryType = UITableViewCellAccessoryNone;
-//    }
-//}
-//
-//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    self.checkedPath = indexPath;
-//    [self.tableView reloadData];
-//}

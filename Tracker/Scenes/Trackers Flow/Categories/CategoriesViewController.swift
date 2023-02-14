@@ -41,14 +41,12 @@ final class CategoriesViewController: UIViewController {
 
     private lazy var categoriesTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
-        tableView.backgroundColor = .Custom.actionBackground
         tableView.register(CategoriesTableViewCell.self, forCellReuseIdentifier: CategoriesTableViewCell.identifier)
-//        tableView.isScrollEnabled = false
+        tableView.isScrollEnabled = false
         tableView.layer.cornerRadius = 16
         tableView.clipsToBounds = true
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.allowsSelection = true
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -120,9 +118,9 @@ final class CategoriesViewController: UIViewController {
             infoLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             infoLabel.topAnchor.constraint(equalTo: infoImage.bottomAnchor, constant: 16),
 
-            categoriesTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            categoriesTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            categoriesTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            categoriesTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            categoriesTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            categoriesTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             categoriesTableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -16),
 
             addCategoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -148,7 +146,7 @@ extension CategoriesViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
+        return 75
     }
 }
 
@@ -159,6 +157,26 @@ extension CategoriesViewController: UITableViewDelegate {
         tableView.reloadData()
         delegate.categoriesDidUpdate(selected: categories[indexPath.row], in: categories)
         coordinator.pop()
+    }
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let isLastCell = indexPath.row == categories.count - 1
+        let isFirstCell = indexPath.row == 0
+        let isOnlyOneCell = categories.count == 1
+
+        cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        if isOnlyOneCell {
+            cell.layer.masksToBounds = true
+            cell.layer.cornerRadius = 16
+        } else if isFirstCell {
+            cell.layer.masksToBounds = true
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        } else if isLastCell {
+            cell.layer.masksToBounds = true
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        }
     }
 }
 

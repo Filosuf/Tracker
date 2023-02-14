@@ -29,7 +29,7 @@ final class CategorySettingsViewController: UIViewController {
         textField.clearButtonMode = .whileEditing
         textField.leftViewMode = UITextField.ViewMode.always
         textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-//        textField.delegate = self
+        textField.delegate = self
         textField.leftView = UIView(frame:CGRect(x:0, y:0, width:10, height:textField.frame.height))
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
@@ -56,6 +56,7 @@ final class CategorySettingsViewController: UIViewController {
         navigationItem.hidesBackButton = true
         taps()
         layout()
+        hideKeyboardWhenTappedAround()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -95,6 +96,16 @@ final class CategorySettingsViewController: UIViewController {
         }
     }
 
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+
     private func layout() {
         [nameTextField,
          saveButton
@@ -111,5 +122,13 @@ final class CategorySettingsViewController: UIViewController {
             saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             saveButton.heightAnchor.constraint(equalToConstant: 60)
         ])
+    }
+}
+
+//MARK: - UITextFieldDelegate
+extension CategorySettingsViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        view.endEditing(true)
+        return true
     }
 }
