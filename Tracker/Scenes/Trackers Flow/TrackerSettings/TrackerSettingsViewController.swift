@@ -126,6 +126,9 @@ final class TrackerSettingsViewController: UIViewController {
         settingsTableView.reloadData()
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+    }
     // MARK: - Methods
     ///update properties for edit tracker
     private func updateProperties(with style: TrackerStyle) {
@@ -153,14 +156,19 @@ final class TrackerSettingsViewController: UIViewController {
 
     private func showWarningLabelIfNeeded() {
         guard let name = nameTextField.text else { return }
-        if name.count < Constants.maxNameLength {
+        if name.count <= Constants.maxNameLength {
+            if !warningLabel.isHidden {
+                settingsTableViewTopConstraint?.constant = 24
+                view.setNeedsLayout()
+            }
             warningLabel.isHidden = true
-            settingsTableViewTopConstraint?.constant = 24
         } else {
-            warningLabel.isHidden = false
-            settingsTableViewTopConstraint?.constant = 62
+            if warningLabel.isHidden {
+                settingsTableViewTopConstraint?.constant = 62
+                warningLabel.isHidden = false
+                view.setNeedsLayout()
+            }
         }
-        view.layoutIfNeeded()
     }
 
     private func hideKeyboardWhenTappedAround() {
