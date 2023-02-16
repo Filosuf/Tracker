@@ -20,6 +20,10 @@ final class CategorySettingsViewController: UIViewController {
 
     private var currentCategory: TrackerCategory?
 
+    private enum Constants {
+        static let maxTitleLength = 38
+    }
+
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
         textField.textColor = .Custom.text
@@ -66,7 +70,7 @@ final class CategorySettingsViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.hidesBackButton = true
-        taps()
+        setupAction()
         layout()
         hideKeyboardWhenTappedAround()
     }
@@ -77,21 +81,23 @@ final class CategorySettingsViewController: UIViewController {
     }
 
     // MARK: - Methods
-    private func taps() {
+    private func setupAction() {
         saveButton.tapAction = { [weak self] in
-            guard let self = self else { return }
-
-            let newTitle = self.nameTextField.text ?? ""
-            let newCategories = self.updateCategories(with: newTitle)
-            self.delegate.categorySettingsDidUpdated(categories: newCategories)
-            self.coordinator.pop()
+            self?.onSaveAction()
         }
+    }
+
+    private func onSaveAction() {
+        let newTitle = nameTextField.text ?? ""
+        let newCategories = updateCategories(with: newTitle)
+        delegate.categorySettingsDidUpdated(categories: newCategories)
+        coordinator.pop()
     }
 
     private func updateCategories(with title: String) -> [TrackerCategory] {
         var categoriesUpdated = [TrackerCategory]()
         if let category = category {
-            let categoriesFiltered = categories.filter{$0 != category}
+            let categoriesFiltered = categories.filter { $0 != category }
             let categoryUpdated = TrackerCategory(title: title, trackers: category.trackers)
             categoriesUpdated = categoriesFiltered + [categoryUpdated]
         } else {
@@ -112,9 +118,9 @@ final class CategorySettingsViewController: UIViewController {
 
     @objc private func textFieldDidChange(_ textField: UITextField) {
         guard let text = textField.text else { return }
-        let isFree = categories.map{$0.title == text}.filter({$0 == true}).isEmpty
+        let isAvailable = categories.map { $0.title == text }.filter({ $0 }).isEmpty
 
-        if text != "", Array(text).count < 39, isFree {
+        if !text.isEmpty, text.count <= Constants.maxTitleLength, isAvailable {
             saveButton.isEnabled = true
             saveButton.updateBackground(backgroundColor: .Custom.text)
         }
@@ -123,17 +129,17 @@ final class CategorySettingsViewController: UIViewController {
             saveButton.updateBackground(backgroundColor: .Custom.gray)
         }
 
-        if !isFree {
+        if !isAvailable {
             warningLabel.text = "Имя категории уже используется"
-        } else if Array(text).count > 38 {
-            warningLabel.text = "Ограничение 38 символов"
+        } else if Array(text).count > Constants.maxTitleLength {
+            warningLabel.text = "Ограничение \(Constants.maxTitleLength) символов"
         } else {
             warningLabel.text = ""
         }
 
     }
 
-    func hideKeyboardWhenTappedAround() {
+    private func hideKeyboardWhenTappedAround() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)

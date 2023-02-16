@@ -15,7 +15,7 @@ final class ScheduleViewController: UIViewController {
     // MARK: - Properties
     private var coordinator: SettingsFlowCoordinator
     private var delegate: ScheduleViewControllerProtocol
-    private var week = DayOfWeek.getWeek()
+    private var week = DayOfWeek.allCases
     private var schedule = [DayOfWeek]()
 
     private let okButton = CustomButton(title: "Готово")
@@ -50,7 +50,7 @@ final class ScheduleViewController: UIViewController {
         navigationItem.hidesBackButton = true
         view.backgroundColor = .white
         title = "Расписание"
-        taps()
+        setupAction()
         layout()
     }
     
@@ -59,17 +59,20 @@ final class ScheduleViewController: UIViewController {
         if isOn {
             schedule.append(day)
         } else {
-            schedule.removeAll(where: {$0 == day})
+            schedule.removeAll(where: { $0 == day })
         }
     }
 
-    private func taps() {
+    private func setupAction() {
         okButton.tapAction = { [weak self] in
-            guard let self = self else { return }
+            self?.finishEditing()
 
-            self.delegate.scheduleDidUpdate(schedule: self.schedule)
-            self.coordinator.pop()
         }
+    }
+
+    private func finishEditing() {
+        self.delegate.scheduleDidUpdate(schedule: self.schedule)
+        self.coordinator.pop()
     }
 
     private func layout() {
@@ -79,8 +82,8 @@ final class ScheduleViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             weekTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            weekTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            weekTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            weekTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            weekTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             weekTableView.heightAnchor.constraint(equalToConstant: 75 * 7),
 
             okButton.heightAnchor.constraint(equalToConstant: 60),

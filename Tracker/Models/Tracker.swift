@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 struct Tracker: Equatable {
-    let id: Double
+    let id: String
     let name: String
     let color: UIColor
     let emoji: String

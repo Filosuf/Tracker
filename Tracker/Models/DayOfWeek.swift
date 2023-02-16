@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum DayOfWeek: String, Comparable {
+enum DayOfWeek: String, Comparable, CaseIterable {
     case monday = "Понедельник"
     case tuesday = "Вторник"
     case wednesday = "Среда"
@@ -15,10 +15,6 @@ enum DayOfWeek: String, Comparable {
     case friday = "Пятница"
     case saturday = "Суббота"
     case sunday = "Воскресенье"
-
-    static func getWeek() -> [DayOfWeek] {
-        [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
-    }
 
     var shortName: String {
         switch self {
@@ -77,7 +73,7 @@ enum DayOfWeek: String, Comparable {
         }
     }
 
-    static func <(lhs: DayOfWeek, rhs: DayOfWeek) -> Bool {
+    static func < (lhs: DayOfWeek, rhs: DayOfWeek) -> Bool {
         return lhs.sortOrder < rhs.sortOrder
     }
 }

@@ -71,7 +71,7 @@ final class CategoriesViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.hidesBackButton = true
-        taps()
+        setupAction()
         layout()
     }
 
@@ -82,7 +82,7 @@ final class CategoriesViewController: UIViewController {
     }
     
     // MARK: - Methods
-    private func taps() {
+    private func setupAction() {
         addCategoryButton.tapAction = { [weak self] in
             guard let self = self else { return }
             self.coordinator.showCategorySettings(edit: nil, in: self.categories, delegate: self)
@@ -112,11 +112,12 @@ final class CategoriesViewController: UIViewController {
         NSLayoutConstraint.activate([
             infoImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             infoImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            infoImage.heightAnchor.constraint(equalToConstant: 100),
-            infoImage.widthAnchor.constraint(equalToConstant: 100),
+            infoImage.heightAnchor.constraint(equalToConstant: 80),
+            infoImage.widthAnchor.constraint(equalToConstant: 80),
 
             infoLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            infoLabel.topAnchor.constraint(equalTo: infoImage.bottomAnchor, constant: 16),
+            infoLabel.topAnchor.constraint(equalTo: infoImage.bottomAnchor, constant: 8),
+            infoLabel.heightAnchor.constraint(equalToConstant: 18 * 2),
 
             categoriesTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             categoriesTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -176,6 +177,7 @@ extension CategoriesViewController: UITableViewDelegate {
             cell.layer.masksToBounds = true
             cell.layer.cornerRadius = 16
             cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            cell.selectionStyle = .none
         }
     }
 }

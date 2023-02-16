@@ -7,29 +7,6 @@
 
 import UIKit
 
-enum TabBarPage {
-    case trackers
-    case stats
-
-    var pageTitle: String {
-        switch self {
-        case .trackers:
-            return "Трекеры"
-        case .stats:
-            return "Статистика"
-        }
-    }
-
-    var image: UIImage? {
-        switch self {
-        case .trackers:
-            return UIImage(systemName: "record.circle.fill")
-        case .stats:
-            return UIImage(systemName: "hare.fill")
-        }
-    }
-}
-
 protocol MainCoordinator {
     func startApplication() -> UIViewController
 }
@@ -39,8 +16,6 @@ final class MainCoordinatorImp: MainCoordinator {
     private let controllersFactory = ViewControllersFactory()
     private var userEmail: String?
 
-    // проверка авторизован ли юзер
-    // показать либо экран авторизации, либо новостную ленту
     func startApplication() -> UIViewController {
         return getTabBarController()
     }
@@ -49,9 +24,9 @@ final class MainCoordinatorImp: MainCoordinator {
     private func getTabBarController() -> UIViewController {
         let tabBarVC = UITabBarController()
         tabBarVC.tabBar.backgroundColor = .white
-        let pages: [TabBarPage] = [.trackers, .stats]
 
-        tabBarVC.setViewControllers(pages.map { getNavController(page: $0) }, animated: true)
+        let viewControllers = TabBarPage.allCases.map { getNavController(page: $0) }
+        tabBarVC.setViewControllers(viewControllers, animated: true)
         return tabBarVC
     }
 

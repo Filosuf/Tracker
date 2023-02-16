@@ -33,7 +33,8 @@ final class TrackersViewController: UIViewController {
     private let infoLabel: UILabel = {
         let label = UILabel()
         label.text = "Что будем отслеживать?"
-        label.textColor = .black
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.textColor = .Custom.text
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -44,7 +45,6 @@ final class TrackersViewController: UIViewController {
         layout.scrollDirection = .vertical
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-//        collectionView.backgroundColor = .white
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.register(TrackersCollectionViewCell.self, forCellWithReuseIdentifier: TrackersCollectionViewCell.identifier)
         collectionView.register(HeaderCollectionView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionView.identifier)
@@ -77,14 +77,12 @@ final class TrackersViewController: UIViewController {
         view.backgroundColor = .white
         setBar()
         layout()
-//        mocDebug()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupView()
         updateVisibleCategories()
-        trackerCollectionView.reloadData()
     }
     
     // MARK: - Methods
@@ -93,6 +91,7 @@ final class TrackersViewController: UIViewController {
         navigationItem.title = "Трекеры"
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(addTracker))
+        navigationItem.leftBarButtonItem?.tintColor = .Custom.text
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
 
@@ -127,11 +126,12 @@ final class TrackersViewController: UIViewController {
         NSLayoutConstraint.activate([
             infoImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             infoImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            infoImage.heightAnchor.constraint(equalToConstant: 100),
-            infoImage.widthAnchor.constraint(equalToConstant: 100),
+            infoImage.heightAnchor.constraint(equalToConstant: 80),
+            infoImage.widthAnchor.constraint(equalToConstant: 80),
 
             infoLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            infoLabel.topAnchor.constraint(equalTo: infoImage.bottomAnchor, constant: 16),
+            infoLabel.topAnchor.constraint(equalTo: infoImage.bottomAnchor, constant: 8),
+            infoLabel.heightAnchor.constraint(equalToConstant: 18),
 
             trackerCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             trackerCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -141,17 +141,30 @@ final class TrackersViewController: UIViewController {
     }
 
     private func updateVisibleCategories() {
-        var categoriesFiltered = categories.map{filterByDateCategory(category: $0)}
+        var categoriesFiltered = categories.map { filterByDateCategory(category: $0) }
+        categoriesFiltered = categoriesFiltered.filter { !$0.trackers.isEmpty }
         categoriesFiltered = categoriesFiltered.sorted(by: <)
         visibleCategories = categoriesFiltered
         trackerCollectionView.reloadData()
     }
 
+
     private func filterByDateCategory(category: TrackerCategory) -> TrackerCategory {
-        var trackers = category.trackers.filter({($0.schedule.contains(where: {$0.dayNumberOfWeek == currentDate.dayNumberOfWeek()}) || $0.schedule.isEmpty) && ($0.name.contains(textOfSearchQuery) || textOfSearchQuery == "")})
+        var trackers = category.trackers.filter( { ($0.schedule.contains(where: { $0.dayNumberOfWeek == currentDate.dayNumberOfWeek() }) || $0.schedule.isEmpty) && ($0.name.contains(textOfSearchQuery) || textOfSearchQuery == "") })
         trackers = trackers.sorted(by: <)
         let filterCategory = TrackerCategory(title: category.title, trackers: trackers)
         return filterCategory
+    }
+
+    private func changeRecord(tracker: Tracker) {
+        let isTodayCompleted = !completedTrackers.filter { $0.id == tracker.id && $0.date == currentDate }.isEmpty
+        let trackerId = tracker.id
+        let record = TrackerRecord(id: trackerId, date: currentDate)
+        if isTodayCompleted {
+            completedTrackers.removeAll(where: {$0 == record})
+        } else {
+            completedTrackers.append(record)
+        }
     }
 }
 
@@ -168,14 +181,11 @@ extension TrackersViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackersCollectionViewCell.identifier, for: indexPath) as! TrackersCollectionViewCell
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
-        let numberOfCompleted = completedTrackers.filter{$0.id == tracker.id}.count
-        cell.setupCell(tracker: tracker, numberOfMarks: numberOfCompleted, isHabit: !tracker.schedule.isEmpty)
+        let numberOfCompleted = completedTrackers.filter { $0.id == tracker.id }.count
+        let isTodayCompleted = !completedTrackers.filter { $0.id == tracker.id && $0.date == currentDate }.isEmpty
+        cell.setupCell(tracker: tracker, numberOfMarks: numberOfCompleted, isTodayCompleted: isTodayCompleted, isHabit: !tracker.schedule.isEmpty)
         cell.buttonAction = { [weak self] in
-            guard let self = self else { return }
-
-            let trackerId = self.visibleCategories[indexPath.section].trackers[indexPath.row].id
-            let record = TrackerRecord(id: trackerId, date: self.currentDate)
-            self.completedTrackers.append(record)
+            self?.changeRecord(tracker: tracker)
             collectionView.reloadItems(at: [indexPath])
         }
         return cell
@@ -190,8 +200,8 @@ extension TrackersViewController: UICollectionViewDataSource {
 
 //MARK: - UICollectionViewDelegateFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
-    private var lineSpacing: CGFloat { return 16}
-    private var interitemSpacing: CGFloat { return 9}
+    private var lineSpacing: CGFloat { return 16 }
+    private var interitemSpacing: CGFloat { return 9 }
     private var sideInset: CGFloat { return 16 }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

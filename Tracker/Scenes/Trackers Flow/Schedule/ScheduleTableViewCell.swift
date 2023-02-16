@@ -33,6 +33,7 @@ class ScheduleTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .Custom.actionBackground
         selectionStyle = UITableViewCell.SelectionStyle.none
+        separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         layout()
     }
 

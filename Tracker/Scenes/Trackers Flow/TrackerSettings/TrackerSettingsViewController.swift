@@ -33,14 +33,19 @@ final class TrackerSettingsViewController: UIViewController {
     private let trackerStyle: TrackerStyle
     private var nameTextFieldTop: CGFloat = 0
     private var settingsTableViewHeight: CGFloat { CGFloat(nameSettingsArray.count * 75 - 1) }
+    private var settingsTableViewTopConstraint: NSLayoutConstraint?
     private var nameSettingsArray = [SettingsType]()
 
     //Оперируем с отдельными свойствами tracker, для удобства, когда tracker = nil
-    private var tempTrackerId: Double?
+    private var tempTrackerId: String?
     private var tempTrackerName: String?
     private var tempTrackerColor: UIColor?
     private var tempTrackerEmoji: String?
     private var tempTrackerSchedule = [DayOfWeek]()
+
+    private enum Constants {
+        static let maxNameLength = 38
+    }
 
     private let cancelButton = CancelButton(title: "Отменить")
     private let saveButton = CustomButton(title: "Save")
@@ -51,6 +56,17 @@ final class TrackerSettingsViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 12)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "5 days"
+        return label
+    }()
+
+    private let warningLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Ограничение \(Constants.maxNameLength) символов"
+        label.font = UIFont.systemFont(ofSize: 17)
+        label.textColor = .Custom.red
+        label.textAlignment = .center
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -101,7 +117,7 @@ final class TrackerSettingsViewController: UIViewController {
         updateTrackerProperties(tracker: tracker)
         setupNavBar()
         layout()
-        taps()
+        setupAction()
         hideKeyboardWhenTappedAround()
     }
 
@@ -131,10 +147,23 @@ final class TrackerSettingsViewController: UIViewController {
 
     @objc private func textFieldDidChange(_ textField: UITextField) {
         tempTrackerName = textField.text
+        showWarningLabelIfNeeded()
         updateSaveButton()
     }
 
-    func hideKeyboardWhenTappedAround() {
+    private func showWarningLabelIfNeeded() {
+        guard let name = nameTextField.text else { return }
+        if name.count < Constants.maxNameLength {
+            warningLabel.isHidden = true
+            settingsTableViewTopConstraint?.constant = 24
+        } else {
+            warningLabel.isHidden = false
+            settingsTableViewTopConstraint?.constant = 62
+        }
+        view.layoutIfNeeded()
+    }
+
+    private func hideKeyboardWhenTappedAround() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
@@ -187,53 +216,50 @@ final class TrackerSettingsViewController: UIViewController {
         }
     }
 
-    private func taps() {
+    private func setupAction() {
         cancelButton.tapAction = { [weak self] in
             self?.coordinator.dismissSettings()
         }
         saveButton.tapAction = { [weak self] in
-            guard let self = self else { return }
-            self.addOrUpdateTracker()
-            self.delegate.categoriesDidUpdate(with: self.categories)
-            self.coordinator.dismissSettings()
+            self?.onSaveAction()
         }
+    }
+
+    private func onSaveAction() {
+        addOrUpdateTracker()
+        delegate.categoriesDidUpdate(with: self.categories)
+        coordinator.dismissSettings()
     }
 
     private func addOrUpdateTracker() {
         guard let currentCategory = currentCategory else  { return }
-        let unchangeableTrackers = currentCategory.trackers.filter{$0 != tracker}
-        let id = tempTrackerId ?? Date().timeIntervalSince1970
+        let unchangeableTrackers = currentCategory.trackers.filter { $0 != tracker }
+        let id = tempTrackerId ?? UUID().uuidString.lowercased()
         let name = tempTrackerName ?? "default name"
         let color = tempTrackerColor ?? .systemPink //debug default value
         let emoji = tempTrackerEmoji ?? "🍏"
         let newOrEditTracker = Tracker(id: id, name: name, color: color, emoji: emoji, schedule: tempTrackerSchedule)
 
         let categoryTitle = currentCategory.title
-        categories.removeAll(where: {$0 == currentCategory})
+        categories.removeAll(where: { $0 == currentCategory })
         var trackers = unchangeableTrackers + [newOrEditTracker]
-        trackers.sort(by: {$0.name < $1.name})
+        trackers.sort(by: { $0.name < $1.name })
         let updatedCategory = TrackerCategory(title: categoryTitle, trackers: trackers)
         categories.append(updatedCategory)
     }
 
     private func scheduleToString(schedule: [DayOfWeek]) -> String {
-        guard schedule.count != 7 else { return "Каждый день" }
+        guard schedule.count != DayOfWeek.allCases.count else { return "Каждый день" }
 
-        var result = ""
         let scheduleSorted = schedule.sorted()
-        for (index, day) in scheduleSorted.enumerated() {
-            result += day.shortName
-            if index < schedule.count - 1 {
-                result += ", "
-            }
-        }
-        return result
+        let scheduleShortName = scheduleSorted.map { $0.shortName }.joined(separator: ", ")
+        return scheduleShortName
     }
 
     private func updateSaveButton() {
         guard let name = nameTextField.text else { return }
-        if name != "",
-           Array(name).count < 39,
+        if !name.isEmpty,
+           name.count <= Constants.maxNameLength,
            currentCategory != nil {
             saveButton.isEnabled = true
             saveButton.updateBackground(backgroundColor: .Custom.text)
@@ -244,16 +270,22 @@ final class TrackerSettingsViewController: UIViewController {
         }
     }
 
+
     private func layout() {
 
         setupView()
 
         [numberOfDayLabel,
          nameTextField,
+         warningLabel,
          settingsTableView,
          cancelButton,
          saveButton
         ].forEach { view.addSubview($0) }
+
+
+        settingsTableViewTopConstraint = settingsTableView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24)
+        settingsTableViewTopConstraint?.isActive = true
 
         NSLayoutConstraint.activate([
             numberOfDayLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -264,7 +296,10 @@ final class TrackerSettingsViewController: UIViewController {
             nameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             nameTextField.topAnchor.constraint(equalTo: numberOfDayLabel.bottomAnchor, constant: nameTextFieldTop),
 
-            settingsTableView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 16),
+            warningLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            warningLabel.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 8),
+            warningLabel.heightAnchor.constraint(equalToConstant: 22),
+
             settingsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             settingsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             settingsTableView.heightAnchor.constraint(equalToConstant: settingsTableViewHeight),

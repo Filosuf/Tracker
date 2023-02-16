@@ -7,7 +7,12 @@
 
 import Foundation
 
-struct TrackerRecord {
-    let id: Double
+struct TrackerRecord: Equatable {
+    let id: String
     let date: Date
+
+    static func == (lhs: TrackerRecord, rhs: TrackerRecord) -> Bool {
+        lhs.id == rhs.id &&
+        lhs.date == rhs.date
+    }
 }

@@ -22,7 +22,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     private let emojiLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "SF Pro", size: 14)
-        label.backgroundColor = UIColor(named: "emojiBackground")
+        label.backgroundColor = .Custom.emojiBackground
         label.textAlignment = .center
         label.layer.cornerRadius = 12
         label.clipsToBounds = true
@@ -51,8 +51,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         let button = UIButton()
         button.setTitle("+", for: .normal)
         button.setTitleColor(.white, for: .normal)
-//        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
-        button.backgroundColor = .systemOrange
         button.layer.cornerRadius = 34 / 2
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(plus), for: .touchUpInside)
@@ -68,7 +66,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setupCell(tracker: Tracker, numberOfMarks: Int, isHabit: Bool) {
+    func setupCell(tracker: Tracker, numberOfMarks: Int, isTodayCompleted: Bool, isHabit: Bool) {
         nameLabel.text = tracker.name
         emojiLabel.text = tracker.emoji
         if isHabit {
@@ -77,7 +75,14 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             numberOfDayLabel.text = String(format: "time".localized, numberOfMarks)
         }
         colorView.backgroundColor = tracker.color
-        plusButton.backgroundColor = tracker.color
+
+        if isTodayCompleted {
+            plusButton.setTitle("✓", for: .normal)
+            plusButton.backgroundColor = tracker.color.withAlphaComponent(0.7)
+        } else {
+            plusButton.setTitle("+", for: .normal)
+            plusButton.backgroundColor = tracker.color.withAlphaComponent(1)
+        }
     }
 
     @objc private func plus() {

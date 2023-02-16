@@ -41,11 +41,11 @@ final class NewTrackerViewController: UIViewController {
         title = "Создание трекера"
         view.backgroundColor = .white
         layout()
-        taps()
+        setupAction()
     }
 
     // MARK: - Methods
-    private func taps() {
+    private func setupAction() {
         newHabitButton.tapAction = { [weak self] in
             guard let self = self else { return }
             self.coordinator.showTrackerSettings(trackerStyle: .newHabit(categories: self.categories), delegate: self.rootViewController)
