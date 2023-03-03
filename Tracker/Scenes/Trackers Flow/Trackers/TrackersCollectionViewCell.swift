@@ -8,6 +8,7 @@
 import UIKit
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
+    // MARK: - Properties
     static let identifier = "TrackersCollectionViewCell"
 
     var buttonAction: (() -> Void)?
@@ -57,6 +58,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         return button
     }()
 
+    // MARK: - LifeCycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         layout()
@@ -66,6 +68,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Methods
     func setupCell(tracker: Tracker, numberOfMarks: Int, isTodayCompleted: Bool, isHabit: Bool) {
         nameLabel.text = tracker.name
         emojiLabel.text = tracker.emoji

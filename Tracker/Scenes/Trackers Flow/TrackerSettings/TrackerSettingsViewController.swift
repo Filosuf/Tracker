@@ -35,6 +35,8 @@ final class TrackerSettingsViewController: UIViewController {
     private var settingsTableViewHeight: CGFloat { CGFloat(nameSettingsArray.count * 75 - 1) }
     private var settingsTableViewTopConstraint: NSLayoutConstraint?
     private var nameSettingsArray = [SettingsType]()
+    private let emojiCollectionDataSource = EmojiCollectionViewDataSource(emojis: Constants.emojis)
+    private let colorCollectionDataSource = ColorCollectionViewDataSource(colors: Constants.colorsName)
 
     //Оперируем с отдельными свойствами tracker, для удобства, когда tracker = nil
     private var tempTrackerId: String?
@@ -45,7 +47,23 @@ final class TrackerSettingsViewController: UIViewController {
 
     private enum Constants {
         static let maxNameLength = 38
+        static let emojis = ["🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
+        static let colorsName = ["color-1", "color-2", "color-3", "color-4", "color-5", "color-6", "color-7", "color-8", "color-9",
+                                 "color-10", "color-11", "color-12", "color-13", "color-14", "color-15", "color-16", "color-17", "color-18"
+        ]
     }
+
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+
+    private let contentView: UIView = {
+        let contentView = UIView()
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        return contentView
+    }()
 
     private let cancelButton = CancelButton(title: "Отменить")
     private let saveButton = CustomButton(title: "Save")
@@ -96,6 +114,50 @@ final class TrackerSettingsViewController: UIViewController {
         return tableView
     }()
 
+    private let emojiCollectionLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .Custom.text
+        label.font = UIFont.boldSystemFont(ofSize: 19)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Emoji"
+        return label
+    }()
+
+    private lazy var emojiCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .white
+        collectionView.isScrollEnabled = false
+        collectionView.dataSource = emojiCollectionDataSource
+        collectionView.delegate = emojiCollectionDataSource
+        collectionView.register(EmojiCollectionViewCell.self, forCellWithReuseIdentifier: EmojiCollectionViewCell.identifier)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        return collectionView
+    }()
+
+    private let colorCollectionLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .Custom.text
+        label.font = UIFont.boldSystemFont(ofSize: 19)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Цвет"
+        return label
+    }()
+
+    private lazy var colorCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .white
+        collectionView.isScrollEnabled = false
+        collectionView.dataSource = colorCollectionDataSource
+        collectionView.delegate = colorCollectionDataSource
+        collectionView.register(ColorCollectionViewCell.self, forCellWithReuseIdentifier: ColorCollectionViewCell.identifier)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        return collectionView
+    }()
+
     // MARK: - Initialiser
     init(coordinator: SettingsFlowCoordinator, trackerStyle: TrackerStyle, delegate: TrackerSettingsViewControllerProtocol) {
         self.coordinator = coordinator
@@ -126,9 +188,6 @@ final class TrackerSettingsViewController: UIViewController {
         settingsTableView.reloadData()
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-    }
     // MARK: - Methods
     ///update properties for edit tracker
     private func updateProperties(with style: TrackerStyle) {
@@ -231,6 +290,14 @@ final class TrackerSettingsViewController: UIViewController {
         saveButton.tapAction = { [weak self] in
             self?.onSaveAction()
         }
+        emojiCollectionDataSource.tapAction = { [weak self] emoji in
+            self?.tempTrackerEmoji = emoji
+            self?.updateSaveButton()
+        }
+        colorCollectionDataSource.tapAction = { [weak self] colorName in
+            self?.tempTrackerColor = UIColor(named: colorName)
+            self?.updateSaveButton()
+        }
     }
 
     private func onSaveAction() {
@@ -268,7 +335,9 @@ final class TrackerSettingsViewController: UIViewController {
         guard let name = nameTextField.text else { return }
         if !name.isEmpty,
            name.count <= Constants.maxNameLength,
-           currentCategory != nil {
+           currentCategory != nil,
+           tempTrackerEmoji != nil,
+           tempTrackerColor != nil {
             saveButton.isEnabled = true
             saveButton.updateBackground(backgroundColor: .Custom.text)
         }
@@ -280,37 +349,61 @@ final class TrackerSettingsViewController: UIViewController {
 
 
     private func layout() {
-
         setupView()
 
         [numberOfDayLabel,
          nameTextField,
          warningLabel,
          settingsTableView,
+         emojiCollectionLabel,
+         emojiCollectionView,
+         colorCollectionLabel,
+         colorCollectionView
+        ].forEach { contentView.addSubview($0) }
+
+        scrollView.addSubview(contentView)
+
+        [scrollView,
          cancelButton,
          saveButton
         ].forEach { view.addSubview($0) }
-
 
         settingsTableViewTopConstraint = settingsTableView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24)
         settingsTableViewTopConstraint?.isActive = true
 
         NSLayoutConstraint.activate([
-            numberOfDayLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            numberOfDayLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            numberOfDayLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            numberOfDayLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
 
             nameTextField.heightAnchor.constraint(equalToConstant: 75),
-            nameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            nameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            nameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            nameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             nameTextField.topAnchor.constraint(equalTo: numberOfDayLabel.bottomAnchor, constant: nameTextFieldTop),
 
-            warningLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            warningLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             warningLabel.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 8),
             warningLabel.heightAnchor.constraint(equalToConstant: 22),
 
-            settingsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            settingsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            settingsTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            settingsTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             settingsTableView.heightAnchor.constraint(equalToConstant: settingsTableViewHeight),
+
+            emojiCollectionLabel.topAnchor.constraint(equalTo: settingsTableView.bottomAnchor, constant: 16),
+            emojiCollectionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+
+            emojiCollectionView.topAnchor.constraint(equalTo: emojiCollectionLabel.bottomAnchor, constant: 16),
+            emojiCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            emojiCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            emojiCollectionView.heightAnchor.constraint(equalToConstant: 204),
+
+            colorCollectionLabel.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 16),
+            colorCollectionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+
+            colorCollectionView.topAnchor.constraint(equalTo: colorCollectionLabel.bottomAnchor, constant: 16),
+            colorCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            colorCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            colorCollectionView.heightAnchor.constraint(equalToConstant: 204),
+            colorCollectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             cancelButton.trailingAnchor.constraint(equalTo: saveButton.leadingAnchor, constant: -8),
@@ -320,7 +413,18 @@ final class TrackerSettingsViewController: UIViewController {
             saveButton.heightAnchor.constraint(equalTo: cancelButton.heightAnchor),
             saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             saveButton.centerYAnchor.constraint(equalTo: cancelButton.centerYAnchor),
-            saveButton.widthAnchor.constraint(equalTo: cancelButton.widthAnchor)
+            saveButton.widthAnchor.constraint(equalTo: cancelButton.widthAnchor),
+
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: cancelButton.topAnchor)
 
         ])
     }
@@ -389,5 +493,27 @@ extension TrackerSettingsViewController: CategoriesViewControllerProtocol {
         currentCategory = category
         self.categories = categories
         updateSaveButton()
+    }
+}
+
+// MARK: - UICollectionViewDataSource
+extension TrackerSettingsViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        Constants.emojis.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.identifier, for: indexPath) as! EmojiCollectionViewCell
+        let emoji = Constants.emojis[indexPath.row]
+        cell.setupCell(emoji: emoji)
+        return cell
+    }
+
+
+    //MARK: - UICollectionViewDelegateFlowLayout
+    private var sideInset: CGFloat { return 16}
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 52, height: 52)
     }
 }
