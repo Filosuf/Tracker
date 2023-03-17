@@ -11,6 +11,7 @@ final class TrackersViewController: UIViewController {
 
     // MARK: - Properties
     private var coordinator: TrackersFlowCoordinator
+    private let trackerStore: TrackerStoreProtocol
     private var categories = [TrackerCategory]()
     private var completedTrackers = [TrackerRecord]()
     private var currentDate = Date()
@@ -62,8 +63,9 @@ final class TrackersViewController: UIViewController {
     }()
 
     // MARK: - Initialiser
-    init(coordinator: TrackersFlowCoordinator) {
+    init(coordinator: TrackersFlowCoordinator, trackerStore: TrackerStoreProtocol) {
         self.coordinator = coordinator
+        self.trackerStore = trackerStore
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -256,3 +258,4 @@ extension TrackersViewController: TrackerSettingsViewControllerProtocol {
         trackerCollectionView.reloadData()
     }
 }
+

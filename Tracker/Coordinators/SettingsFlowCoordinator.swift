@@ -9,8 +9,9 @@ import UIKit
 
 final class SettingsFlowCoordinator {
 
+    // MARK: - Properties
     private let controllersFactory: ViewControllersFactory
-    let navCon: UINavigationController
+    private let navCon: UINavigationController
 
     //MARK: - Initialiser
     init(navCon: UINavigationController, controllersFactory: ViewControllersFactory) {
@@ -18,6 +19,7 @@ final class SettingsFlowCoordinator {
         self.navCon = navCon
     }
 
+    // MARK: - Methods
     func showTrackerSettings(trackerStyle: TrackerStyle, delegate: TrackerSettingsViewControllerProtocol) {
         let vc = controllersFactory.makeTrackerSettingsViewController(coordinator: self, trackerStyle: trackerStyle, delegate: delegate)
         navCon.pushViewController(vc, animated: true)

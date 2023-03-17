@@ -9,8 +9,8 @@ import UIKit
 
 final class ViewControllersFactory {
 
-    func makeTrackersViewController(coordinator: TrackersFlowCoordinator) -> TrackersViewController {
-        let viewController = TrackersViewController(coordinator: coordinator)
+    func makeTrackersViewController(coordinator: TrackersFlowCoordinator, trackerStore: TrackerStoreProtocol) -> TrackersViewController {
+        let viewController = TrackersViewController(coordinator: coordinator, trackerStore: trackerStore)
         return viewController
     }
 

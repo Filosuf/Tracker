@@ -13,14 +13,22 @@ protocol MainCoordinator {
 
 final class MainCoordinatorImp: MainCoordinator {
 
-    private let controllersFactory = ViewControllersFactory()
-    private var userEmail: String?
+    // MARK: - Properties
+    private let controllersFactory: ViewControllersFactory
+    private let dataStoreFactory: DataStoreFactory
 
+    // MARK: - LifeCycle
+    init(controllersFactory: ViewControllersFactory, dataStoreFactory: DataStoreFactory) {
+        self.controllersFactory = controllersFactory
+        self.dataStoreFactory = dataStoreFactory
+    }
+
+    // MARK: - Methods
     func startApplication() -> UIViewController {
         return getTabBarController()
     }
 
-    //MARK: - Metods
+    //MARK: - Private methods
     private func getTabBarController() -> UIViewController {
         let tabBarVC = UITabBarController()
         tabBarVC.tabBar.backgroundColor = .white
@@ -37,8 +45,9 @@ final class MainCoordinatorImp: MainCoordinator {
 
         switch page {
         case .trackers:
-            let trackerChildCoordinator = TrackersFlowCoordinator(navCon: navigationVC, controllersFactory: controllersFactory)
-            let trackersVC = controllersFactory.makeTrackersViewController(coordinator: trackerChildCoordinator)
+            let trackerChildCoordinator = TrackersFlowCoordinator(navCon: navigationVC, controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory)
+            let trackerStore = dataStoreFactory.makeTrackersStore()
+            let trackersVC = controllersFactory.makeTrackersViewController(coordinator: trackerChildCoordinator, trackerStore: trackerStore)
             navigationVC.navigationBar.prefersLargeTitles = true
             navigationVC.pushViewController(trackersVC, animated: true)
         case .stats:

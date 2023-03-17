@@ -9,15 +9,19 @@ import UIKit
 
 final class TrackersFlowCoordinator {
 
+    // MARK: - Properties
+    private let navCon: UINavigationController
     private let controllersFactory: ViewControllersFactory
-    let navCon: UINavigationController
+    private let dataStoreFactory: DataStoreFactory
 
     //MARK: - Initialiser
-    init(navCon: UINavigationController, controllersFactory: ViewControllersFactory) {
-        self.controllersFactory = controllersFactory
+    init(navCon: UINavigationController, controllersFactory: ViewControllersFactory, dataStoreFactory: DataStoreFactory) {
         self.navCon = navCon
+        self.controllersFactory = controllersFactory
+        self.dataStoreFactory = dataStoreFactory
     }
 
+    // MARK: - Methods
     func showNewTracker(rootViewController: TrackerSettingsViewControllerProtocol, categories: [TrackerCategory]) {
         let navigationVC = UINavigationController()
         let coordinator = SettingsFlowCoordinator(navCon: navigationVC, controllersFactory: controllersFactory)
@@ -25,9 +29,4 @@ final class TrackersFlowCoordinator {
         navigationVC.pushViewController(vc, animated: true)
         navCon.present(navigationVC, animated: true)
     }
-
-//    func showTrackerSettings(isRegular: Bool, navigationVC: UINavigationController) {
-//        let vc = controllersFactory.makeTrackerSettingsViewController(coordinator: self, isRegular: isRegular)
-//        navigationVC.pushViewController(vc, animated: true)
-//    }
 }

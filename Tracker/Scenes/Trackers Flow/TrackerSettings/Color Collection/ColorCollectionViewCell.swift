@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ColorCollectionViewCell: UICollectionViewCell {
+final class ColorCollectionViewCell: UICollectionViewCell {
     // MARK: - Properties
     static let identifier = "ColorCollectionViewCell"
     private var color = UIColor.white

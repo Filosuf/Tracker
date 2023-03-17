@@ -16,7 +16,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: windowScene)
-        let mainCoordinator: MainCoordinator = MainCoordinatorImp()
+        let dataStore = TrackersRepository()
+        let controllersFactory = ViewControllersFactory()
+        let dataStoreFactory = DataStoreFactory(dataStore: dataStore)
+        let mainCoordinator: MainCoordinator = MainCoordinatorImp(controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory)
         window?.rootViewController = mainCoordinator.startApplication()
         window?.makeKeyAndVisible()
         window?.overrideUserInterfaceStyle = .light
