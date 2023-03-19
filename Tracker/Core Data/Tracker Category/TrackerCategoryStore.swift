@@ -20,10 +20,11 @@ protocol TrackerCategoryStoreDelegate: AnyObject {
 protocol TrackerCategoryStoreProtocol {
     var numberOfSections: Int { get }
     func numberOfRowsInSection(_ section: Int) -> Int
-    func sectionTitle(for section: Int) -> String
     func object(at: IndexPath) -> TrackerCategory?
-    func addCategory(_ category: TrackerCategory) throws
-    func deleteCategory(at indexPath: IndexPath) throws
+    func isDuplicateOfCategory(with title: String) -> Bool
+    func updateCategoryTitle(previous: String, new: String)
+    func addCategory(_ category: TrackerCategory)
+    func deleteCategory(at indexPath: IndexPath)
 }
 
 // MARK: - TrackerCategoryStore
@@ -43,7 +44,7 @@ final class TrackerCategoryStore: NSObject {
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
 
         let fetchRequest = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: false)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
 
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                                   managedObjectContext: context,
@@ -70,11 +71,6 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
         fetchedResultsController.sections?[section].numberOfObjects ?? 0
     }
 
-    func sectionTitle(for section: Int) -> String {
-        let currentSection = fetchedResultsController.sections?[section]
-        return currentSection?.name ?? ""
-    }
-
     func object(at indexPath: IndexPath) -> TrackerCategory? {
         let trackerCategoryCoreData = fetchedResultsController.object(at: indexPath)
         guard let title = trackerCategoryCoreData.title else { return nil }
@@ -82,11 +78,19 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
         return TrackerCategory(title: title, trackers: trackers)
     }
 
-    func addCategory(_ category: TrackerCategory) throws {
+    func isDuplicateOfCategory(with title: String) -> Bool {
+        dataStore.isDuplicateOfCategory(with: title)
+    }
+
+    func addCategory(_ category: TrackerCategory) {
          dataStore.add(category)
     }
 
-    func deleteCategory(at indexPath: IndexPath) throws {
+    func updateCategoryTitle(previous: String, new: String) {
+        dataStore.updateCategoryTitle(previous: previous, new: new)
+    }
+
+    func deleteCategory(at indexPath: IndexPath)  {
 //        let record = fetchedResultsController.object(at: indexPath)
 //        try? dataStore.delete(record)
     }

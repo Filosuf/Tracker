@@ -28,11 +28,12 @@ final class ViewControllersFactory {
     }
 
     func makeCategoriesViewController(coordinator: SettingsFlowCoordinator,
+                                      trackerCategoryStore: TrackerCategoryStoreProtocol,
                                       current category: TrackerCategory?,
                                       in categories: [TrackerCategory],
                                       delegate: CategoriesViewControllerProtocol
     ) -> CategoriesViewController {
-        let viewController = CategoriesViewController(coordinator: coordinator, current: category, in: categories, delegate: delegate)
+        let viewController = CategoriesViewController(coordinator: coordinator, trackerCategoryStore: trackerCategoryStore, current: category, in: categories, delegate: delegate)
         return viewController
     }
 
@@ -42,11 +43,10 @@ final class ViewControllersFactory {
     }
 
     func makeCategorySettingsViewController(coordinator: SettingsFlowCoordinator,
-                                            edit category: TrackerCategory?,
-                                            in categories: [TrackerCategory],
-                                            delegate: CategorySettingsViewControllerProtocol
+                                            trackerCategoryStore: TrackerCategoryStoreProtocol,
+                                            indexPathEditCategory: IndexPath?
     ) -> CategorySettingsViewController {
-        let viewController = CategorySettingsViewController(coordinator: coordinator, edit: category, in: categories, delegate: delegate)
+        let viewController = CategorySettingsViewController(coordinator: coordinator, trackerCategoryStore: trackerCategoryStore, indexPathEditCategory: indexPathEditCategory)
         return viewController
     }
 

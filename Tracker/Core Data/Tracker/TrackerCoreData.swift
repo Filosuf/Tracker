@@ -15,7 +15,7 @@ extension TrackerCoreData {
         let scheduleArray = scheduleStringArray.compactMap { DayOfWeek(rawValue: $0) }
         return Tracker(id: id ?? "",
                        name: name ?? "",
-                       color: color ?? UIColor.white,
+                       color: color as? UIColor ?? UIColor.white,
                        emoji: emoji ?? "",
                        schedule: scheduleArray)
     }

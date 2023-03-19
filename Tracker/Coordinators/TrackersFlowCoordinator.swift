@@ -24,7 +24,7 @@ final class TrackersFlowCoordinator {
     // MARK: - Methods
     func showNewTracker(rootViewController: TrackerSettingsViewControllerProtocol, categories: [TrackerCategory]) {
         let navigationVC = UINavigationController()
-        let coordinator = SettingsFlowCoordinator(navCon: navigationVC, controllersFactory: controllersFactory)
+        let coordinator = SettingsFlowCoordinator(navCon: navigationVC, controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory)
         let vc = controllersFactory.makeNewTrackerViewController(coordinator: coordinator, categories: categories, rootViewController: rootViewController)
         navigationVC.pushViewController(vc, animated: true)
         navCon.present(navigationVC, animated: true)

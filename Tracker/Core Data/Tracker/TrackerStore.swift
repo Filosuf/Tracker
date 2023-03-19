@@ -20,6 +20,7 @@ protocol TrackerStoreDelegate: AnyObject {
 protocol TrackerStoreProtocol {
     var numberOfSections: Int { get }
     func numberOfRowsInSection(_ section: Int) -> Int
+    func sectionTitle(for section: Int) -> String
     func object(at: IndexPath) -> Tracker?
     func saveTracker(_ tracker: Tracker, titleCategory: String) throws
     func deleteTracker(at indexPath: IndexPath) throws
@@ -73,6 +74,11 @@ extension TrackerStore: TrackerStoreProtocol {
         fetchedResultsController.sections?[section].numberOfObjects ?? 0
     }
 
+    func sectionTitle(for section: Int) -> String {
+        let currentSection = fetchedResultsController.sections?[section]
+        return currentSection?.name ?? ""
+    }
+    
     func object(at indexPath: IndexPath) -> Tracker? {
         let trackerCoreData = fetchedResultsController.object(at: indexPath)
         let tracker = trackerCoreData.toTracker()

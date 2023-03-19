@@ -56,10 +56,21 @@ extension TrackersRepository: TrackerCategoryDataStore {
 //            }
 //        }
 //    }
+    func isDuplicateOfCategory(with title: String) -> Bool {
+        let duplicate = fetchCategory(title: title, context: context)
+        return duplicate != nil
+    }
+
+    func updateCategoryTitle(previous: String, new: String) {
+        let category = fetchCategory(title: previous, context: context)
+        category?.title = new
+        saveContext()
+    }
 
     private func fetchCategory(title: String, context: NSManagedObjectContext) -> TrackerCategoryCoreData? {
         let request = TrackerCategoryCoreData.fetchRequest()
         request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCategoryCoreData.title), title)
+        let result = try? context.fetch(request)
         return (try? context.fetch(request))?.first
     }
 }
@@ -85,7 +96,7 @@ extension TrackersRepository: TrackerDataStore {
 
     private func fetchTracker(tracker: Tracker, context: NSManagedObjectContext) -> TrackerCoreData? {
         let request = TrackerCoreData.fetchRequest()
-        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.id), tracker.id)
+        request.predicate = NSPredicate(format: "id == %@", tracker.id)
         return (try? context.fetch(request))?.first
     }
 }

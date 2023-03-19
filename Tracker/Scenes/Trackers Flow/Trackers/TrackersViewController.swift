@@ -98,7 +98,7 @@ final class TrackersViewController: UIViewController {
     }
 
     private func setupView() {
-        if categories.isEmpty {
+        if trackerStore.numberOfSections == 0 {
             trackerCollectionView.isHidden = true
             infoLabel.isHidden = false
             infoImage.isHidden = false
@@ -173,16 +173,16 @@ final class TrackersViewController: UIViewController {
 // MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        visibleCategories.count
+        trackerStore.numberOfSections
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        visibleCategories[section].trackers.count
+        trackerStore.numberOfRowsInSection(section)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackersCollectionViewCell.identifier, for: indexPath) as! TrackersCollectionViewCell
-        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        guard let tracker = trackerStore.object(at: indexPath) else { return UICollectionViewCell() }
         let numberOfCompleted = completedTrackers.filter { $0.id == tracker.id }.count
         let isTodayCompleted = !completedTrackers.filter { $0.id == tracker.id && $0.date == currentDate }.isEmpty
         cell.setupCell(tracker: tracker, numberOfMarks: numberOfCompleted, isTodayCompleted: isTodayCompleted, isHabit: !tracker.schedule.isEmpty)
@@ -195,7 +195,8 @@ extension TrackersViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCollectionView.identifier, for: indexPath) as? HeaderCollectionView  else { return UICollectionReusableView() }
-        view.setTitle(visibleCategories[indexPath.section].title)
+        let title = trackerStore.sectionTitle(for: indexPath.section)
+        view.setTitle(title)
         return view
     }
 }

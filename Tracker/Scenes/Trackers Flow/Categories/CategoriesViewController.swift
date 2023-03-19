@@ -14,6 +14,7 @@ protocol CategoriesViewControllerProtocol {
 final class CategoriesViewController: UIViewController {
     // MARK: - Properties
     private let coordinator: SettingsFlowCoordinator
+    private let trackerCategoryStore: TrackerCategoryStoreProtocol
     private var categories = [TrackerCategory]()
     private let delegate: CategoriesViewControllerProtocol
 
@@ -54,8 +55,9 @@ final class CategoriesViewController: UIViewController {
     private let addCategoryButton = CustomButton(title: "Добавить категорию")
     
     // MARK: - Initialiser
-    init(coordinator: SettingsFlowCoordinator, current category: TrackerCategory?, in categories: [TrackerCategory], delegate: CategoriesViewControllerProtocol) {
+    init(coordinator: SettingsFlowCoordinator, trackerCategoryStore: TrackerCategoryStoreProtocol, current category: TrackerCategory?, in categories: [TrackerCategory], delegate: CategoriesViewControllerProtocol) {
         self.coordinator = coordinator
+        self.trackerCategoryStore = trackerCategoryStore
         currentCategory = category
         self.categories = categories
         self.delegate = delegate
@@ -85,13 +87,13 @@ final class CategoriesViewController: UIViewController {
     private func setupAction() {
         addCategoryButton.tapAction = { [weak self] in
             guard let self = self else { return }
-            self.coordinator.showCategorySettings(edit: nil, in: self.categories, delegate: self)
+            self.coordinator.showCategorySettings(indexPathEditCategory: nil)
         }
     }
 
     private func setupView() {
         title = "Категория"
-        if categories.isEmpty {
+        if trackerCategoryStore.numberOfRowsInSection(0) == 0 {
             categoriesTableView.isHidden = true
             infoLabel.isHidden = false
             infoImage.isHidden = false
@@ -135,12 +137,12 @@ final class CategoriesViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension CategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        categories.count
+        trackerCategoryStore.numberOfRowsInSection(section)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CategoriesTableViewCell.identifier, for: indexPath) as! CategoriesTableViewCell
-        let category = categories[indexPath.row]
+        guard let category = trackerCategoryStore.object(at: indexPath) else { return UITableViewCell() }
         let isSetCheckmark = category == currentCategory
         cell.configure(title: category.title, isSetCheckmark: isSetCheckmark)
         return cell
@@ -154,16 +156,18 @@ extension CategoriesViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        currentCategory = categories[indexPath.row]
+        guard let categorySelected = trackerCategoryStore.object(at: indexPath) else { return }
+        currentCategory = categorySelected
         tableView.reloadData()
-        delegate.categoriesDidUpdate(selected: categories[indexPath.row], in: categories)
+        delegate.categoriesDidUpdate(selected: categorySelected, in: categories)
         coordinator.pop()
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let isLastCell = indexPath.row == categories.count - 1
+        let numberOfCategories = trackerCategoryStore.numberOfRowsInSection(indexPath.section)
+        let isLastCell = indexPath.row == numberOfCategories - 1
         let isFirstCell = indexPath.row == 0
-        let isOnlyOneCell = categories.count == 1
+        let isOnlyOneCell = numberOfCategories == 1
 
         cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         if isOnlyOneCell {
@@ -181,11 +185,3 @@ extension CategoriesViewController: UITableViewDelegate {
         }
     }
 }
-
-//MARK: - CategorySettingsViewControllerProtocol
-extension CategoriesViewController: CategorySettingsViewControllerProtocol {
-    func categorySettingsDidUpdated(categories: [TrackerCategory]) {
-        self.categories = categories
-    }
-}
-

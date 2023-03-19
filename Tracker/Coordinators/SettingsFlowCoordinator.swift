@@ -12,11 +12,13 @@ final class SettingsFlowCoordinator {
     // MARK: - Properties
     private let controllersFactory: ViewControllersFactory
     private let navCon: UINavigationController
-
+    private let dataStoreFactory: DataStoreFactory
+    
     //MARK: - Initialiser
-    init(navCon: UINavigationController, controllersFactory: ViewControllersFactory) {
+    init(navCon: UINavigationController, controllersFactory: ViewControllersFactory, dataStoreFactory: DataStoreFactory) {
         self.controllersFactory = controllersFactory
         self.navCon = navCon
+        self.dataStoreFactory = dataStoreFactory
     }
 
     // MARK: - Methods
@@ -28,7 +30,8 @@ final class SettingsFlowCoordinator {
     func showCategories(current category: TrackerCategory?,
                         in categories: [TrackerCategory],
                         delegate: CategoriesViewControllerProtocol) {
-        let vc = controllersFactory.makeCategoriesViewController(coordinator: self, current: category, in: categories, delegate: delegate)
+        let trackerCategoryStore = dataStoreFactory.makeTrackerCategoryStore()
+        let vc = controllersFactory.makeCategoriesViewController(coordinator: self, trackerCategoryStore: trackerCategoryStore, current: category, in: categories, delegate: delegate)
         navCon.pushViewController(vc, animated: true)
     }
 
@@ -37,10 +40,9 @@ final class SettingsFlowCoordinator {
         navCon.pushViewController(vc, animated: true)
     }
 
-    func showCategorySettings(edit category: TrackerCategory?,
-                              in categories: [TrackerCategory],
-                              delegate: CategorySettingsViewControllerProtocol) {
-        let vc = controllersFactory.makeCategorySettingsViewController(coordinator: self, edit: category, in: categories, delegate: delegate)
+    func showCategorySettings(indexPathEditCategory: IndexPath?) {
+        let trackerCategoryStore = dataStoreFactory.makeTrackerCategoryStore()
+        let vc = controllersFactory.makeCategorySettingsViewController(coordinator: self, trackerCategoryStore: trackerCategoryStore, indexPathEditCategory: indexPathEditCategory)
         navCon.pushViewController(vc, animated: true)
     }
 

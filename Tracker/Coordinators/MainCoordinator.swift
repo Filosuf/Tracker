@@ -46,7 +46,7 @@ final class MainCoordinatorImp: MainCoordinator {
         switch page {
         case .trackers:
             let trackerChildCoordinator = TrackersFlowCoordinator(navCon: navigationVC, controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory)
-            let trackerStore = dataStoreFactory.makeTrackersStore()
+            let trackerStore = dataStoreFactory.makeTrackerStore()
             let trackersVC = controllersFactory.makeTrackersViewController(coordinator: trackerChildCoordinator, trackerStore: trackerStore)
             navigationVC.navigationBar.prefersLargeTitles = true
             navigationVC.pushViewController(trackersVC, animated: true)

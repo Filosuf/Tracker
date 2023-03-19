@@ -18,8 +18,13 @@ final class DataStoreFactory {
     }
 
     // MARK: - Methods
-    func makeTrackersStore() -> TrackerStore {
+    func makeTrackerStore() -> TrackerStore {
         let store = TrackerStore(dataStore)
+        return store
+    }
+
+    func makeTrackerCategoryStore() -> TrackerCategoryStore {
+        let store = TrackerCategoryStore(dataStore)
         return store
     }
 }

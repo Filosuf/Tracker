@@ -14,11 +14,8 @@ protocol CategorySettingsViewControllerProtocol {
 final class CategorySettingsViewController: UIViewController {
     // MARK: - Properties
     private let coordinator: SettingsFlowCoordinator
-    private var category: TrackerCategory?
-    private let categories: [TrackerCategory]
-    private let delegate: CategorySettingsViewControllerProtocol
-
-    private var currentCategory: TrackerCategory?
+    private let trackerCategoryStore: TrackerCategoryStoreProtocol
+    private let indexPathEditCategory: IndexPath?
 
     private enum Constants {
         static let maxTitleLength = 38
@@ -53,11 +50,10 @@ final class CategorySettingsViewController: UIViewController {
     private let saveButton = CustomButton(title: "Готово")
 
     // MARK: - Initialiser
-    init(coordinator: SettingsFlowCoordinator, edit category: TrackerCategory?, in categories: [TrackerCategory], delegate: CategorySettingsViewControllerProtocol) {
+    init(coordinator: SettingsFlowCoordinator, trackerCategoryStore: TrackerCategoryStoreProtocol, indexPathEditCategory: IndexPath?) {
         self.coordinator = coordinator
-        self.category = category
-        self.categories = categories
-        self.delegate = delegate
+        self.trackerCategoryStore = trackerCategoryStore
+        self.indexPathEditCategory = indexPathEditCategory
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -86,41 +82,39 @@ final class CategorySettingsViewController: UIViewController {
             self?.onSaveAction()
         }
     }
-
+// TODO: - make save new/update category in Core Data
     private func onSaveAction() {
         let newTitle = nameTextField.text ?? ""
-        let newCategories = updateCategories(with: newTitle)
-        delegate.categorySettingsDidUpdated(categories: newCategories)
+        updateCategories(with: newTitle)
         coordinator.pop()
     }
 
-    private func updateCategories(with title: String) -> [TrackerCategory] {
-        var categoriesUpdated = [TrackerCategory]()
-        if let category = category {
-            let categoriesFiltered = categories.filter { $0 != category }
-            let categoryUpdated = TrackerCategory(title: title, trackers: category.trackers)
-            categoriesUpdated = categoriesFiltered + [categoryUpdated]
+    private func updateCategories(with title: String){
+        if let indexPath = indexPathEditCategory,
+           let editCategory = trackerCategoryStore.object(at: indexPath) {
+            trackerCategoryStore.updateCategoryTitle(previous: editCategory.title, new: title)
         } else {
-            categoriesUpdated = categories + [TrackerCategory(title: title, trackers: [])]
+            let newTrackerCategory = TrackerCategory(title: title, trackers: [])
+            trackerCategoryStore.addCategory(newTrackerCategory)
         }
-        return categoriesUpdated.sorted(by: <)
     }
 
     private func setupView() {
         title = "Новая категория"
         saveButton.isEnabled = false
         saveButton.updateBackground(backgroundColor: .Custom.gray)
-        if let category = category {
-            nameTextField.text = category.title
+        if let indexPath = indexPathEditCategory,
+           let editCategory = trackerCategoryStore.object(at: indexPath) {
+            nameTextField.text = editCategory.title
             title = "Редактирование категории"
         }
     }
 
     @objc private func textFieldDidChange(_ textField: UITextField) {
         guard let text = textField.text else { return }
-        let isAvailable = categories.map { $0.title == text }.filter({ $0 }).isEmpty
+        let isNotAvailable = trackerCategoryStore.isDuplicateOfCategory(with: text)
 
-        if !text.isEmpty, text.count <= Constants.maxTitleLength, isAvailable {
+        if !text.isEmpty, text.count <= Constants.maxTitleLength, !isNotAvailable {
             saveButton.isEnabled = true
             saveButton.updateBackground(backgroundColor: .Custom.text)
         }
@@ -129,7 +123,7 @@ final class CategorySettingsViewController: UIViewController {
             saveButton.updateBackground(backgroundColor: .Custom.gray)
         }
 
-        if !isAvailable {
+        if isNotAvailable {
             warningLabel.text = "Имя категории уже используется"
         } else if Array(text).count > Constants.maxTitleLength {
             warningLabel.text = "Ограничение \(Constants.maxTitleLength) символов"
