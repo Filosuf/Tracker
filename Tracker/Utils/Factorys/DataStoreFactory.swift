@@ -27,4 +27,9 @@ final class DataStoreFactory {
         let store = TrackerCategoryStore(dataStore)
         return store
     }
+
+    func makeTrackerRecordsStore() -> TrackerRecordStore {
+        let store = TrackerRecordStore(dataStore)
+        return store
+    }
 }

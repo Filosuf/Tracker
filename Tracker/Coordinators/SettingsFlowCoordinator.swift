@@ -22,16 +22,16 @@ final class SettingsFlowCoordinator {
     }
 
     // MARK: - Methods
-    func showTrackerSettings(trackerStyle: TrackerStyle, delegate: TrackerSettingsViewControllerProtocol) {
-        let vc = controllersFactory.makeTrackerSettingsViewController(coordinator: self, trackerStyle: trackerStyle, delegate: delegate)
+    func showTrackerSettings(trackerStyle: TrackerStyle) {
+        let trackerStore = dataStoreFactory.makeTrackerStore()
+        let vc = controllersFactory.makeTrackerSettingsViewController(coordinator: self, trackerStyle: trackerStyle, trackerStore: trackerStore)
         navCon.pushViewController(vc, animated: true)
     }
 
     func showCategories(current category: TrackerCategory?,
-                        in categories: [TrackerCategory],
                         delegate: CategoriesViewControllerProtocol) {
         let trackerCategoryStore = dataStoreFactory.makeTrackerCategoryStore()
-        let vc = controllersFactory.makeCategoriesViewController(coordinator: self, trackerCategoryStore: trackerCategoryStore, current: category, in: categories, delegate: delegate)
+        let vc = controllersFactory.makeCategoriesViewController(coordinator: self, trackerCategoryStore: trackerCategoryStore, current: category, delegate: delegate)
         navCon.pushViewController(vc, animated: true)
     }
 

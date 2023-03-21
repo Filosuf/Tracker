@@ -8,14 +8,13 @@
 import UIKit
 
 protocol CategoriesViewControllerProtocol {
-    func categoriesDidUpdate(selected category: TrackerCategory, in categories: [TrackerCategory])
+    func categoriesDidUpdate(selected category: TrackerCategory)
 }
 
 final class CategoriesViewController: UIViewController {
     // MARK: - Properties
     private let coordinator: SettingsFlowCoordinator
     private let trackerCategoryStore: TrackerCategoryStoreProtocol
-    private var categories = [TrackerCategory]()
     private let delegate: CategoriesViewControllerProtocol
 
     private var currentCategory: TrackerCategory?
@@ -55,11 +54,10 @@ final class CategoriesViewController: UIViewController {
     private let addCategoryButton = CustomButton(title: "Добавить категорию")
     
     // MARK: - Initialiser
-    init(coordinator: SettingsFlowCoordinator, trackerCategoryStore: TrackerCategoryStoreProtocol, current category: TrackerCategory?, in categories: [TrackerCategory], delegate: CategoriesViewControllerProtocol) {
+    init(coordinator: SettingsFlowCoordinator, trackerCategoryStore: TrackerCategoryStoreProtocol, current category: TrackerCategory?, delegate: CategoriesViewControllerProtocol) {
         self.coordinator = coordinator
         self.trackerCategoryStore = trackerCategoryStore
         currentCategory = category
-        self.categories = categories
         self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
     }
@@ -159,7 +157,7 @@ extension CategoriesViewController: UITableViewDelegate {
         guard let categorySelected = trackerCategoryStore.object(at: indexPath) else { return }
         currentCategory = categorySelected
         tableView.reloadData()
-        delegate.categoriesDidUpdate(selected: categorySelected, in: categories)
+        delegate.categoriesDidUpdate(selected: categorySelected)
         coordinator.pop()
     }
 

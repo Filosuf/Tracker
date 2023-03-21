@@ -8,10 +8,10 @@
 import UIKit
 
 enum TrackerStyle {
-    case newHabit(categories: [TrackerCategory])
-    case newEvent(categories: [TrackerCategory])
-    case editHabit(tracker: Tracker, currentCategory: TrackerCategory, categories: [TrackerCategory])
-    case editEvent(tracker: Tracker, currentCategory: TrackerCategory, categories: [TrackerCategory])
+    case newHabit
+    case newEvent
+    case editHabit(indexPath: IndexPath, currentCategory: TrackerCategory)
+    case editEvent(indexPath: IndexPath, currentCategory: TrackerCategory)
 }
 
 enum SettingsType: String {
@@ -19,17 +19,14 @@ enum SettingsType: String {
     case schedule = "Расписание"
 }
 
-protocol TrackerSettingsViewControllerProtocol {
-    func categoriesDidUpdate(with categories: [TrackerCategory])
-}
-
 final class TrackerSettingsViewController: UIViewController {
     // MARK: - Properties
-    private var coordinator: SettingsFlowCoordinator
-    private var delegate: TrackerSettingsViewControllerProtocol
-    private var tracker: Tracker?
+    private let coordinator: SettingsFlowCoordinator
+    private let trackerStore: TrackerStoreProtocol
+    private var indexPathEditTracker: IndexPath?
     private var currentCategory: TrackerCategory?
-    private var categories = [TrackerCategory]()
+    //    private var tracker: Tracker?
+//    private var categories = [TrackerCategory]()
     private let trackerStyle: TrackerStyle
     private var nameTextFieldTop: CGFloat = 0
     private var settingsTableViewHeight: CGFloat { CGFloat(nameSettingsArray.count * 75 - 1) }
@@ -159,10 +156,10 @@ final class TrackerSettingsViewController: UIViewController {
     }()
 
     // MARK: - Initialiser
-    init(coordinator: SettingsFlowCoordinator, trackerStyle: TrackerStyle, delegate: TrackerSettingsViewControllerProtocol) {
+    init(coordinator: SettingsFlowCoordinator, trackerStyle: TrackerStyle, trackerStore: TrackerStoreProtocol ) {
         self.coordinator = coordinator
         self.trackerStyle = trackerStyle
-        self.delegate = delegate
+        self.trackerStore = trackerStore
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -176,7 +173,6 @@ final class TrackerSettingsViewController: UIViewController {
         view.backgroundColor = .white
         saveButton.isEnabled = false
         updateProperties(with: trackerStyle)
-        updateTrackerProperties(tracker: tracker)
         setupNavBar()
         layout()
         setupAction()
@@ -192,19 +188,28 @@ final class TrackerSettingsViewController: UIViewController {
     ///update properties for edit tracker
     private func updateProperties(with style: TrackerStyle) {
         switch trackerStyle {
-        case .newHabit(let categories):
-            self.categories = categories
-        case .newEvent(let categories):
-            self.categories = categories
-        case .editHabit(let tracker, let currentCategory, let categories):
-            self.tracker = tracker
+        case .newHabit: return
+        case .newEvent: return
+        case .editHabit(let indexPath, let currentCategory):
+            self.indexPathEditTracker = indexPath
             self.currentCategory = currentCategory
-            self.categories = categories
-        case .editEvent(let tracker, let currentCategory, let categories):
-            self.tracker = tracker
+            self.updateTrackerProperties(with: indexPath)
+        case .editEvent(let indexPath, let currentCategory):
+            self.indexPathEditTracker = indexPath
             self.currentCategory = currentCategory
-            self.categories = categories
+            self.updateTrackerProperties(with: indexPath)
         }
+    }
+
+    private func updateTrackerProperties(with indexPath: IndexPath) {
+        let (tracker, _) = trackerStore.object(at: indexPath)
+        guard let tracker = tracker else { return }
+
+        tempTrackerId = tracker.id
+        tempTrackerName = tracker.name
+        tempTrackerColor = tracker.color
+        tempTrackerEmoji = tracker.emoji
+        tempTrackerSchedule = tracker.schedule
     }
 
     @objc private func textFieldDidChange(_ textField: UITextField) {
@@ -240,15 +245,6 @@ final class TrackerSettingsViewController: UIViewController {
         view.endEditing(true)
     }
 
-    private func updateTrackerProperties(tracker: Tracker?) {
-        guard let tracker = tracker else { return }
-
-        tempTrackerId = tracker.id
-        tempTrackerName = tracker.name
-        tempTrackerColor = tracker.color
-        tempTrackerEmoji = tracker.emoji
-        tempTrackerSchedule = tracker.schedule
-    }
 
     private func setupNavBar() {
         navigationItem.hidesBackButton = true
@@ -302,25 +298,18 @@ final class TrackerSettingsViewController: UIViewController {
 
     private func onSaveAction() {
         addOrUpdateTracker()
-        delegate.categoriesDidUpdate(with: self.categories)
         coordinator.dismissSettings()
     }
 
     private func addOrUpdateTracker() {
         guard let currentCategory = currentCategory else  { return }
-        let unchangeableTrackers = currentCategory.trackers.filter { $0 != tracker }
         let id = tempTrackerId ?? UUID().uuidString.lowercased()
         let name = tempTrackerName ?? "default name"
         let color = tempTrackerColor ?? .systemPink //debug default value
         let emoji = tempTrackerEmoji ?? "🍏"
         let newOrEditTracker = Tracker(id: id, name: name, color: color, emoji: emoji, schedule: tempTrackerSchedule)
 
-        let categoryTitle = currentCategory.title
-        categories.removeAll(where: { $0 == currentCategory })
-        var trackers = unchangeableTrackers + [newOrEditTracker]
-        trackers.sort(by: { $0.name < $1.name })
-        let updatedCategory = TrackerCategory(title: categoryTitle, trackers: trackers)
-        categories.append(updatedCategory)
+        trackerStore.saveTracker(newOrEditTracker, titleCategory: currentCategory.title)
     }
 
     private func scheduleToString(schedule: [DayOfWeek]) -> String {
@@ -465,7 +454,7 @@ extension TrackerSettingsViewController: UITableViewDelegate {
         let nameSettings = nameSettingsArray[indexPath.row]
         switch nameSettings {
         case .category:
-            coordinator.showCategories(current: currentCategory, in: categories, delegate: self)
+            coordinator.showCategories(current: currentCategory, delegate: self)
         case .schedule:
             coordinator.showSchedule(schedule: tempTrackerSchedule, delegate: self)
         }
@@ -489,9 +478,8 @@ extension TrackerSettingsViewController: ScheduleViewControllerProtocol {
 }
 // MARK: - CategoriesViewControllerProtocol
 extension TrackerSettingsViewController: CategoriesViewControllerProtocol {
-    func categoriesDidUpdate(selected category: TrackerCategory, in categories: [TrackerCategory]) {
+    func categoriesDidUpdate(selected category: TrackerCategory) {
         currentCategory = category
-        self.categories = categories
         updateSaveButton()
     }
 }

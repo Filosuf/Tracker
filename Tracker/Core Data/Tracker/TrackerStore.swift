@@ -19,19 +19,16 @@ protocol TrackerStoreDelegate: AnyObject {
 
 protocol TrackerStoreProtocol {
     var numberOfSections: Int { get }
+    func updatePredicate(searchText: String?, dayOfWeek: String?)
     func numberOfRowsInSection(_ section: Int) -> Int
     func sectionTitle(for section: Int) -> String
-    func object(at: IndexPath) -> Tracker?
-    func saveTracker(_ tracker: Tracker, titleCategory: String) throws
-    func deleteTracker(at indexPath: IndexPath) throws
+    func object(at: IndexPath) -> (Tracker?, [TrackerRecord])
+    func saveTracker(_ tracker: Tracker, titleCategory: String)
+    func deleteTracker(at indexPath: IndexPath)
 }
 
 // MARK: - TrackerCategoryStore
 final class TrackerStore: NSObject {
-
-    enum DataProviderError: Error {
-        case failedToInitializeContext
-    }
 
     weak var delegate: TrackerStoreDelegate?
 
@@ -66,8 +63,25 @@ final class TrackerStore: NSObject {
 
 // MARK: - DataProviderProtocol
 extension TrackerStore: TrackerStoreProtocol {
+
     var numberOfSections: Int {
         fetchedResultsController.sections?.count ?? 0
+    }
+
+    func updatePredicate(searchText: String?, dayOfWeek: String?) {
+        var subpredicates = [NSPredicate]()
+        if let dayOfWeek = dayOfWeek {
+            let predicateDayOfWeek = NSPredicate(format: "(%K contains[c] %@) || (%K == %@)", #keyPath(TrackerCoreData.schedule), dayOfWeek, #keyPath(TrackerCoreData.schedule), "")
+            subpredicates.append(predicateDayOfWeek)
+        }
+
+        if let searchText = searchText, searchText != "" {
+            let predicateName = NSPredicate(format: "%K contains[c] %@", #keyPath(TrackerCoreData.name), searchText)
+            subpredicates.append(predicateName)
+        }
+        let andPredicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)
+        fetchedResultsController.fetchRequest.predicate = andPredicate
+        try? fetchedResultsController.performFetch()
     }
 
     func numberOfRowsInSection(_ section: Int) -> Int {
@@ -79,19 +93,20 @@ extension TrackerStore: TrackerStoreProtocol {
         return currentSection?.name ?? ""
     }
     
-    func object(at indexPath: IndexPath) -> Tracker? {
+    func object(at indexPath: IndexPath) -> (Tracker?, [TrackerRecord]) {
         let trackerCoreData = fetchedResultsController.object(at: indexPath)
         let tracker = trackerCoreData.toTracker()
-        return tracker
+        let recordsOptional = trackerCoreData.recordSorted.map { $0.toTrackerRecord() }
+        let records = recordsOptional.compactMap { $0 }
+        return (tracker, records)
     }
 
-    func saveTracker(_ tracker: Tracker, titleCategory: String) throws {
+    func saveTracker(_ tracker: Tracker, titleCategory: String) {
          dataStore.saveTracker(tracker, titleCategory: titleCategory)
     }
 
-    func deleteTracker(at indexPath: IndexPath) throws {
-//        let record = fetchedResultsController.object(at: indexPath)
-//        try? dataStore.delete(record)
+    func deleteTracker(at indexPath: IndexPath) {
+
     }
 }
 

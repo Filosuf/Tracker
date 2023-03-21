@@ -5,21 +5,22 @@
         <relationship name="trackers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrackerCoreData" inverseName="category" inverseEntity="TrackerCoreData"/>
     </entity>
     <entity name="TrackerCoreData" representedClassName="TrackerCoreData" syncable="YES" codeGenerationType="class">
-        <attribute name="attribute" optional="YES" attributeType="String"/>
-        <attribute name="color" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
+        <attribute name="color" optional="YES" attributeType="String"/>
         <attribute name="emoji" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="schedule" optional="YES" attributeType="String"/>
         <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerCategoryCoreData" inverseName="trackers" inverseEntity="TrackerCategoryCoreData"/>
+        <relationship name="records" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrackerRecordCoreData" inverseName="tracker" inverseEntity="TrackerRecordCoreData"/>
     </entity>
     <entity name="TrackerRecordCoreData" representedClassName="TrackerRecordCoreData" syncable="YES" codeGenerationType="class">
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="String"/>
+        <relationship name="tracker" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerCoreData" inverseName="records" inverseEntity="TrackerCoreData"/>
     </entity>
     <elements>
-        <element name="TrackerCategoryCoreData" positionX="-54" positionY="-9" width="128" height="59"/>
-        <element name="TrackerCoreData" positionX="-63" positionY="-18" width="128" height="134"/>
-        <element name="TrackerRecordCoreData" positionX="-36" positionY="9" width="128" height="59"/>
+        <element name="TrackerCategoryCoreData" positionX="-14.6124267578125" positionY="-29.7313232421875" width="128" height="73"/>
+        <element name="TrackerCoreData" positionX="-287.3593139648438" positionY="-119.8329772949219" width="128" height="134"/>
+        <element name="TrackerRecordCoreData" positionX="190.1524658203125" positionY="16.8057861328125" width="128" height="74"/>
     </elements>
 </model>

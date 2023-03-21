@@ -9,31 +9,30 @@ import UIKit
 
 final class ViewControllersFactory {
 
-    func makeTrackersViewController(coordinator: TrackersFlowCoordinator, trackerStore: TrackerStoreProtocol) -> TrackersViewController {
-        let viewController = TrackersViewController(coordinator: coordinator, trackerStore: trackerStore)
+    func makeTrackersViewController(coordinator: TrackersFlowCoordinator, trackerStore: TrackerStoreProtocol, recordStore: TrackerRecordStoreProtocol) -> TrackersViewController {
+        let viewController = TrackersViewController(coordinator: coordinator, trackerStore: trackerStore, recordStore: recordStore)
         return viewController
     }
 
-    func makeNewTrackerViewController(coordinator: SettingsFlowCoordinator, categories: [TrackerCategory], rootViewController: TrackerSettingsViewControllerProtocol) -> NewTrackerViewController {
-        let viewController = NewTrackerViewController(coordinator: coordinator, categories: categories, rootViewController: rootViewController)
+    func makeNewTrackerViewController(coordinator: SettingsFlowCoordinator) -> NewTrackerViewController {
+        let viewController = NewTrackerViewController(coordinator: coordinator)
         return viewController
     }
 
     func makeTrackerSettingsViewController(coordinator: SettingsFlowCoordinator,
                                            trackerStyle: TrackerStyle,
-                                           delegate: TrackerSettingsViewControllerProtocol
+                                           trackerStore: TrackerStoreProtocol
     ) -> TrackerSettingsViewController {
-        let viewController = TrackerSettingsViewController(coordinator: coordinator, trackerStyle: trackerStyle, delegate: delegate)
+        let viewController = TrackerSettingsViewController(coordinator: coordinator, trackerStyle: trackerStyle, trackerStore: trackerStore)
         return viewController
     }
 
     func makeCategoriesViewController(coordinator: SettingsFlowCoordinator,
                                       trackerCategoryStore: TrackerCategoryStoreProtocol,
                                       current category: TrackerCategory?,
-                                      in categories: [TrackerCategory],
                                       delegate: CategoriesViewControllerProtocol
     ) -> CategoriesViewController {
-        let viewController = CategoriesViewController(coordinator: coordinator, trackerCategoryStore: trackerCategoryStore, current: category, in: categories, delegate: delegate)
+        let viewController = CategoriesViewController(coordinator: coordinator, trackerCategoryStore: trackerCategoryStore, current: category, delegate: delegate)
         return viewController
     }
 

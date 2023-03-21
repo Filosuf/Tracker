@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreData
+import UIKit
 
 final class TrackersRepository {
     // MARK: - Properties
@@ -70,7 +71,6 @@ extension TrackersRepository: TrackerCategoryDataStore {
     private func fetchCategory(title: String, context: NSManagedObjectContext) -> TrackerCategoryCoreData? {
         let request = TrackerCategoryCoreData.fetchRequest()
         request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCategoryCoreData.title), title)
-        let result = try? context.fetch(request)
         return (try? context.fetch(request))?.first
     }
 }
@@ -78,11 +78,12 @@ extension TrackersRepository: TrackerCategoryDataStore {
 extension TrackersRepository: TrackerDataStore {
 
     func saveTracker(_ tracker: Tracker, titleCategory: String) {
-        let newTracker  = fetchTracker(tracker: tracker, context: context) ?? TrackerCoreData(context: context)
+        let newTracker  = fetchTracker(trackerId: tracker.id, context: context) ?? TrackerCoreData(context: context)
         let trackerCategory = fetchCategory(title: titleCategory, context: context)
 
+        newTracker.id = tracker.id
         newTracker.name = tracker.name
-        newTracker.color = tracker.color
+        newTracker.color = tracker.color.hexValue
         newTracker.emoji = tracker.emoji
         newTracker.schedule = tracker.schedule.map { $0.rawValue }.joined()
         newTracker.category = trackerCategory
@@ -94,9 +95,45 @@ extension TrackersRepository: TrackerDataStore {
 
     }
 
-    private func fetchTracker(tracker: Tracker, context: NSManagedObjectContext) -> TrackerCoreData? {
+    private func fetchTracker(trackerId: String, context: NSManagedObjectContext) -> TrackerCoreData? {
         let request = TrackerCoreData.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", tracker.id)
+        request.predicate = NSPredicate(format: "id == %@", trackerId)
+        return (try? context.fetch(request))?.first
+    }
+
+}
+
+extension TrackersRepository: TrackerRecordDataStore {
+
+    func addRecord(trackerId: String, date: Date) {
+        let newRecord  = TrackerRecordCoreData(context: context)
+        let tracker  = fetchTracker(trackerId: trackerId, context: context)
+
+        newRecord.id = trackerId
+        newRecord.date = date
+        newRecord.tracker = tracker
+
+        saveContext()
+    }
+
+    func deleteRecord(trackerId: String, date: Date) {
+        if let record = fetchRecord(trackerId: trackerId, date: date, context: context) {
+            context.delete(record)
+            saveContext()
+        }
+    }
+
+    func fetchRecords(trackerId: String) -> [TrackerRecordCoreData]? {
+        let request = TrackerRecordCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", trackerId)
+        let recordsCoreData = try? context.fetch(request)
+        return recordsCoreData
+
+    }
+
+    private func fetchRecord(trackerId: String, date: Date, context: NSManagedObjectContext) -> TrackerRecordCoreData? {
+        let request = TrackerRecordCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@ && %K == %@", trackerId, #keyPath(TrackerRecordCoreData.date), date as NSDate)
         return (try? context.fetch(request))?.first
     }
 }
