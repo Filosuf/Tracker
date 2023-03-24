@@ -67,7 +67,7 @@ final class TrackerSettingsViewController: UIViewController {
 
     private let numberOfDayLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .Custom.text
+        label.textColor = .Custom.blackDay
         label.font = UIFont.systemFont(ofSize: 12)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "5 days"
@@ -87,7 +87,7 @@ final class TrackerSettingsViewController: UIViewController {
 
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
-        textField.textColor = .Custom.text
+        textField.textColor = .Custom.blackDay
         textField.font = UIFont.systemFont(ofSize: 17)
         textField.backgroundColor = .Custom.actionBackground
         textField.placeholder = "Введите название трекера"
@@ -113,7 +113,7 @@ final class TrackerSettingsViewController: UIViewController {
 
     private let emojiCollectionLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .Custom.text
+        label.textColor = .Custom.blackDay
         label.font = UIFont.boldSystemFont(ofSize: 19)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Emoji"
@@ -135,7 +135,7 @@ final class TrackerSettingsViewController: UIViewController {
 
     private let colorCollectionLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .Custom.text
+        label.textColor = .Custom.blackDay
         label.font = UIFont.boldSystemFont(ofSize: 19)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Цвет"
@@ -147,7 +147,6 @@ final class TrackerSettingsViewController: UIViewController {
         layout.scrollDirection = .vertical
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white
-        collectionView.isScrollEnabled = false
         collectionView.dataSource = colorCollectionDataSource
         collectionView.delegate = colorCollectionDataSource
         collectionView.register(ColorCollectionViewCell.self, forCellWithReuseIdentifier: ColorCollectionViewCell.identifier)
@@ -328,7 +327,7 @@ final class TrackerSettingsViewController: UIViewController {
            tempTrackerEmoji != nil,
            tempTrackerColor != nil {
             saveButton.isEnabled = true
-            saveButton.updateBackground(backgroundColor: .Custom.text)
+            saveButton.updateBackground(backgroundColor: .Custom.blackDay)
         }
         else {
             saveButton.isEnabled = false

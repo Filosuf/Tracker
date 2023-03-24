@@ -33,15 +33,8 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
     // MARK: - Methods
     override var isSelected: Bool {
         didSet{
-            if self.isSelected {
-                UIView.animate(withDuration: 0.3) {
-                    self.backgroundColor = .Custom.emojiSelected
-                }
-            }
-            else {
-                UIView.animate(withDuration: 0.3) {
-                    self.backgroundColor = .white
-                }
+            UIView.animate(withDuration: 0.3) {
+                self.backgroundColor = self.isSelected ? .Custom.emojiSelected : .white
             }
         }
     }

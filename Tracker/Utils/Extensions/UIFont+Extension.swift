@@ -5,7 +5,6 @@
 //  Created by Filosuf on 31.01.2023.
 //
 
-import Foundation
 import UIKit
 
 extension UIFont {

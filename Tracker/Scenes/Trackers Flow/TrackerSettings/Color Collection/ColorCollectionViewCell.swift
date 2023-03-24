@@ -35,15 +35,8 @@ final class ColorCollectionViewCell: UICollectionViewCell {
     // MARK: - Methods
     override var isSelected: Bool {
         didSet{
-            if self.isSelected {
-                UIView.animate(withDuration: 0.3) {
-                    self.layer.borderColor = self.color.cgColor
-                }
-            }
-            else {
-                UIView.animate(withDuration: 0.3) {
-                    self.layer.borderColor = UIColor.white.cgColor
-                }
+            UIView.animate(withDuration: 0.3) {
+                self.layer.borderColor = self.isSelected ? self.color.cgColor : UIColor.white.cgColor
             }
         }
     }

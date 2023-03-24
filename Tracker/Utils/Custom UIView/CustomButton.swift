@@ -11,7 +11,7 @@ final class CustomButton: UIButton {
 
     var tapAction: (() -> Void)?
 
-    init(title: String = "", titleColor: UIColor = .white, backgroundColor: UIColor? = .Custom.text) {
+    init(title: String = "", titleColor: UIColor = .white, backgroundColor: UIColor? = .Custom.blackDay) {
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         setButton(title: title, titleColor: titleColor, backgroundColor: backgroundColor)
     }

@@ -10,7 +10,8 @@ import UIKit
 extension TrackerCoreData {
 
     var recordSorted: [TrackerRecordCoreData] {
-        records?.sortedArray(using: [NSSortDescriptor(key: "date", ascending: true)]) as! [TrackerRecordCoreData]
+        let records = records?.sortedArray(using: [NSSortDescriptor(key: "date", ascending: true)]) as? [TrackerRecordCoreData]
+        return records ?? []
     }
 
     func toTracker() -> Tracker {

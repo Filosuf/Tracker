@@ -9,7 +9,8 @@ import UIKit
 
 extension UIColor {
     enum Custom {
-        static var text: UIColor? { UIColor(named: "text") }
+        static var blackDay: UIColor? { UIColor(named: "blackDay") }
+        static var whiteDay: UIColor? { UIColor(named: "whiteDay") }
         static var actionBackground: UIColor? { UIColor(named: "actionBackground") }
         static var emojiBackground: UIColor? { UIColor(named: "emojiBackground") }
         static var gray: UIColor? { UIColor(named: "gray") }

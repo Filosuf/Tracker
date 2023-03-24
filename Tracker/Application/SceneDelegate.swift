@@ -16,11 +16,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: windowScene)
+        let settingsStorage = SettingsStorage()
         let dataStore = TrackersRepository()
         let controllersFactory = ViewControllersFactory()
         let dataStoreFactory = DataStoreFactory(dataStore: dataStore)
         let mainCoordinator: MainCoordinator = MainCoordinatorImp(controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory)
-        window?.rootViewController = mainCoordinator.startApplication()
+    
+        window?.rootViewController = mainCoordinator.startApplication(skipOnboarding: settingsStorage.skipOnboarding)
+//        window?.rootViewController = Onboarding2ViewController()
+//        window?.rootViewController = OnboardingPageViewController()
         window?.makeKeyAndVisible()
         window?.overrideUserInterfaceStyle = .light
     }

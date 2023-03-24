@@ -9,6 +9,7 @@ import UIKit
 
 final class ViewControllersFactory {
 
+    //MARK: - Trackers Flow
     func makeTrackersViewController(coordinator: TrackersFlowCoordinator, trackerStore: TrackerStoreProtocol, recordStore: TrackerRecordStoreProtocol) -> TrackersViewController {
         let viewController = TrackersViewController(coordinator: coordinator, trackerStore: trackerStore, recordStore: recordStore)
         return viewController
@@ -49,8 +50,33 @@ final class ViewControllersFactory {
         return viewController
     }
 
+    //MARK: - Stats Flow
     func makeStatsViewController() -> StatsViewController {
         let viewController = StatsViewController()
         return viewController
+    }
+
+    //MARK: - Onboarding
+    func makeOnboarding(settingsStorage: SettingsStorageProtocol, coordinator: MainCoordinator) -> OnboardingPageViewController {
+        let pageFirst = makeOnboardingFirst()
+        let pageSecond = makeOnboardingSecond()
+        let pages = [pageFirst, pageSecond]
+
+        let onboarding = OnboardingPageViewController(pages: pages, settingsStorage: settingsStorage, coordinator: coordinator)
+        return onboarding
+    }
+
+    func makeOnboardingFirst() -> OnboardingViewController {
+        let background = UIImage(named: "onboardingFirst")
+        let title = "Отслеживайте только то, что хотите"
+        let vc = OnboardingViewController(backgroundImage: background, title: title)
+        return vc
+    }
+
+    func makeOnboardingSecond() -> OnboardingViewController {
+        let background = UIImage(named: "onboardingSecond")
+        let title = "Даже если это не литры воды или йога"
+        let vc = OnboardingViewController(backgroundImage: background, title: title)
+        return vc
     }
 }

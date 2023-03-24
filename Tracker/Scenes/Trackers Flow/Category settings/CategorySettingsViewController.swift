@@ -23,7 +23,7 @@ final class CategorySettingsViewController: UIViewController {
 
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
-        textField.textColor = .Custom.text
+        textField.textColor = .Custom.blackDay
         textField.font = UIFont.systemFont(ofSize: 17)
         textField.backgroundColor = .Custom.actionBackground
         textField.placeholder = "Введите название категории"
@@ -116,7 +116,7 @@ final class CategorySettingsViewController: UIViewController {
 
         if !text.isEmpty, text.count <= Constants.maxTitleLength, !isNotAvailable {
             saveButton.isEnabled = true
-            saveButton.updateBackground(backgroundColor: .Custom.text)
+            saveButton.updateBackground(backgroundColor: .Custom.blackDay)
         }
         else {
             saveButton.isEnabled = false

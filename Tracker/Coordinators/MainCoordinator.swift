@@ -8,7 +8,8 @@
 import UIKit
 
 protocol MainCoordinator {
-    func startApplication() -> UIViewController
+    func startApplication(skipOnboarding: Bool) -> UIViewController
+    func switchToTabBarController()
 }
 
 final class MainCoordinatorImp: MainCoordinator {
@@ -24,8 +25,18 @@ final class MainCoordinatorImp: MainCoordinator {
     }
 
     // MARK: - Methods
-    func startApplication() -> UIViewController {
-        return getTabBarController()
+    func startApplication(skipOnboarding: Bool) -> UIViewController {
+        if skipOnboarding == true {
+            return getTabBarController()
+        } else {
+            return controllersFactory.makeOnboarding(settingsStorage: SettingsStorage(), coordinator: self)
+        }
+    }
+
+    func switchToTabBarController() {
+        // Получаем экземпляр `Window` приложения
+        guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
+        window.rootViewController = getTabBarController()
     }
 
     //MARK: - Private methods

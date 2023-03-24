@@ -5,7 +5,6 @@
 //  Created by Filosuf on 09.03.2023.
 //
 
-import Foundation
 import CoreData
 import UIKit
 
@@ -15,7 +14,7 @@ final class TrackersRepository {
         let container = NSPersistentContainer(name: "Tracker")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                assertionFailure("Unresolved error \(error), \(error.userInfo)")
             }
         })
         container.viewContext.automaticallyMergesChangesFromParent = true
@@ -30,7 +29,7 @@ final class TrackersRepository {
                 try context.save()
             } catch {
                let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                assertionFailure("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
     }

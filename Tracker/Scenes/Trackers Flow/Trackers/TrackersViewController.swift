@@ -33,7 +33,7 @@ final class TrackersViewController: UIViewController {
         let label = UILabel()
         label.text = "Что будем отслеживать?"
         label.font = UIFont.systemFont(ofSize: 12)
-        label.textColor = .Custom.text
+        label.textColor = .Custom.blackDay
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -86,7 +86,7 @@ final class TrackersViewController: UIViewController {
         navigationItem.title = "Трекеры"
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(addTracker))
-        navigationItem.leftBarButtonItem?.tintColor = .Custom.text
+        navigationItem.leftBarButtonItem?.tintColor = .Custom.blackDay
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
 

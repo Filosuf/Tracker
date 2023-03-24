@@ -36,14 +36,6 @@ final class EmojiCollectionViewDataSource: NSObject, UICollectionViewDataSource,
         return CGSize(width: 52, height: 52)
     }
 
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-//        sideInset
-//    }
-
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-//        UIEdgeInsets(top: 0, left: sideInset, bottom: 0, right: sideInset)
-//    }
-
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         tapAction?(emojis[indexPath.row])
     }

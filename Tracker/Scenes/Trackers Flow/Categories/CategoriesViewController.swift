@@ -33,6 +33,7 @@ final class CategoriesViewController: UIViewController {
                 объединить по смыслу
                 """
         label.textColor = .black
+        label.font = UIFont.systemFont(ofSize: 12)
         label.numberOfLines = 2
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -168,18 +169,13 @@ extension CategoriesViewController: UITableViewDelegate {
         let isOnlyOneCell = numberOfCategories == 1
 
         cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        if isOnlyOneCell {
-            cell.layer.masksToBounds = true
-            cell.layer.cornerRadius = 16
-        } else if isFirstCell {
-            cell.layer.masksToBounds = true
-            cell.layer.cornerRadius = 16
+        cell.layer.masksToBounds = true
+        cell.layer.cornerRadius = 16
+        cell.selectionStyle = .none
+        if isFirstCell && !isOnlyOneCell {
             cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         } else if isLastCell {
-            cell.layer.masksToBounds = true
-            cell.layer.cornerRadius = 16
             cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-            cell.selectionStyle = .none
         }
     }
 }

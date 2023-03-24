@@ -10,6 +10,7 @@ import Foundation
 extension TrackerCategoryCoreData {
 
     var trackersSorted: [TrackerCoreData] {
-        trackers?.sortedArray(using: [NSSortDescriptor(key: "name", ascending: true)]) as! [TrackerCoreData]
+        let trackers = trackers?.sortedArray(using: [NSSortDescriptor(key: "name", ascending: true)]) as? [TrackerCoreData]
+        return trackers ?? []
     }
 }

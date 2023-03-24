@@ -42,7 +42,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
 
     private let numberOfDayLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .Custom.text
+        label.textColor = .Custom.blackDay
         label.font = UIFont.systemFont(ofSize: 12)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
