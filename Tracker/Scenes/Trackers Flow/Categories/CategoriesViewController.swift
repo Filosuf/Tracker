@@ -13,11 +13,7 @@ protocol CategoriesViewControllerProtocol {
 
 final class CategoriesViewController: UIViewController {
     // MARK: - Properties
-    private let coordinator: SettingsFlowCoordinator
-    private let trackerCategoryStore: TrackerCategoryStoreProtocol
-    private let delegate: CategoriesViewControllerProtocol
-
-    private var currentCategory: TrackerCategory?
+    private let viewModel: CategoriesViewModel
 
     private let infoImage: UIImageView = {
         let imageView = UIImageView()
@@ -55,11 +51,8 @@ final class CategoriesViewController: UIViewController {
     private let addCategoryButton = CustomButton(title: "Добавить категорию")
     
     // MARK: - Initialiser
-    init(coordinator: SettingsFlowCoordinator, trackerCategoryStore: TrackerCategoryStoreProtocol, current category: TrackerCategory?, delegate: CategoriesViewControllerProtocol) {
-        self.coordinator = coordinator
-        self.trackerCategoryStore = trackerCategoryStore
-        currentCategory = category
-        self.delegate = delegate
+    init(viewModel: CategoriesViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -72,27 +65,37 @@ final class CategoriesViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.hidesBackButton = true
+        bind()
         setupAction()
         layout()
+        showPlaceholder(viewModel.numberOfCategories == 0)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupView()
+        title = "Категория"
         categoriesTableView.reloadData()
     }
-    
+
     // MARK: - Methods
-    private func setupAction() {
-        addCategoryButton.tapAction = { [weak self] in
-            guard let self = self else { return }
-            self.coordinator.showCategorySettings(indexPathEditCategory: nil)
+    private func bind() {
+        viewModel.$currentCategory.bind { [weak self] _ in
+            self?.categoriesTableView.reloadData()
+        }
+        viewModel.$numberOfCategories.bind { [weak self] _ in
+            self?.categoriesTableView.reloadData()
+            self?.showPlaceholder(self?.viewModel.numberOfCategories == 0)
         }
     }
 
-    private func setupView() {
-        title = "Категория"
-        if trackerCategoryStore.numberOfRowsInSection(0) == 0 {
+    private func setupAction() {
+        addCategoryButton.tapAction = { [weak self] in
+            self?.viewModel.showCategorySettings()
+        }
+    }
+
+    private func showPlaceholder(_ isShown: Bool) {
+        if isShown {
             categoriesTableView.isHidden = true
             infoLabel.isHidden = false
             infoImage.isHidden = false
@@ -136,14 +139,15 @@ final class CategoriesViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension CategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        trackerCategoryStore.numberOfRowsInSection(section)
+        viewModel.numberOfRowsInSection(section)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CategoriesTableViewCell.identifier, for: indexPath) as! CategoriesTableViewCell
-        guard let category = trackerCategoryStore.object(at: indexPath) else { return UITableViewCell() }
-        let isSetCheckmark = category == currentCategory
-        cell.configure(title: category.title, isSetCheckmark: isSetCheckmark)
+        if let cellViewModel = viewModel.fetchViewModelForCell(with: indexPath) {
+            cell.configure(title: cellViewModel.title, isSetCheckmark: cellViewModel
+                            .isSetCheckmark)
+        }
         return cell
     }
 
@@ -155,15 +159,11 @@ extension CategoriesViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let categorySelected = trackerCategoryStore.object(at: indexPath) else { return }
-        currentCategory = categorySelected
-        tableView.reloadData()
-        delegate.categoriesDidUpdate(selected: categorySelected)
-        coordinator.pop()
+        viewModel.selectCategory(with: indexPath)
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let numberOfCategories = trackerCategoryStore.numberOfRowsInSection(indexPath.section)
+        let numberOfCategories = viewModel.numberOfRowsInSection(indexPath.section)
         let isLastCell = indexPath.row == numberOfCategories - 1
         let isFirstCell = indexPath.row == 0
         let isOnlyOneCell = numberOfCategories == 1

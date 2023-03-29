@@ -27,7 +27,7 @@ protocol TrackerStoreProtocol {
     func deleteTracker(at indexPath: IndexPath)
 }
 
-// MARK: - TrackerCategoryStore
+// MARK: - TrackerStore
 final class TrackerStore: NSObject {
 
     weak var delegate: TrackerStoreDelegate?
@@ -61,7 +61,7 @@ final class TrackerStore: NSObject {
     }
 }
 
-// MARK: - DataProviderProtocol
+// MARK: - TrackerStoreProtocol
 extension TrackerStore: TrackerStoreProtocol {
 
     var numberOfSections: Int {

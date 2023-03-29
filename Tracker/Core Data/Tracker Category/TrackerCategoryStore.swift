@@ -61,7 +61,7 @@ final class TrackerCategoryStore: NSObject {
     }
 }
 
-// MARK: - DataProviderProtocol
+// MARK: - TrackerCategoryStoreProtocol
 extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
     var numberOfSections: Int {
         fetchedResultsController.sections?.count ?? 0

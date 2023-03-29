@@ -33,7 +33,8 @@ final class ViewControllersFactory {
                                       current category: TrackerCategory?,
                                       delegate: CategoriesViewControllerProtocol
     ) -> CategoriesViewController {
-        let viewController = CategoriesViewController(coordinator: coordinator, trackerCategoryStore: trackerCategoryStore, current: category, delegate: delegate)
+        let viewModel = CategoriesViewModel(categoryStore: trackerCategoryStore, coordinator: coordinator, current: category, delegate: delegate)
+        let viewController = CategoriesViewController(viewModel: viewModel)
         return viewController
     }
 
@@ -46,7 +47,8 @@ final class ViewControllersFactory {
                                             trackerCategoryStore: TrackerCategoryStoreProtocol,
                                             indexPathEditCategory: IndexPath?
     ) -> CategorySettingsViewController {
-        let viewController = CategorySettingsViewController(coordinator: coordinator, trackerCategoryStore: trackerCategoryStore, indexPathEditCategory: indexPathEditCategory)
+        let viewModel = CategorySettingsViewModel(coordinator: coordinator, trackerCategoryStore: trackerCategoryStore, indexPathEditCategory: indexPathEditCategory)
+        let viewController = CategorySettingsViewController(viewModel: viewModel)
         return viewController
     }
 

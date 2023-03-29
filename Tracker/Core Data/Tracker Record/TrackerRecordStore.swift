@@ -14,7 +14,7 @@ protocol TrackerRecordStoreProtocol {
     func deleteRecord(trackerId: String, date: Date)
 }
 
-// MARK: - TrackerCategoryStore
+// MARK: - TrackerRecordStore
 final class TrackerRecordStore: NSObject {
 
     private let context: NSManagedObjectContext
@@ -26,7 +26,7 @@ final class TrackerRecordStore: NSObject {
     }
 }
 
-// MARK: - DataProviderProtocol
+// MARK: - TrackerRecordStoreProtocol
 extension TrackerRecordStore: TrackerRecordStoreProtocol {
 
     func fetchRecords(trackerId: String) -> [TrackerRecord]? {

@@ -13,13 +13,7 @@ protocol CategorySettingsViewControllerProtocol {
 
 final class CategorySettingsViewController: UIViewController {
     // MARK: - Properties
-    private let coordinator: SettingsFlowCoordinator
-    private let trackerCategoryStore: TrackerCategoryStoreProtocol
-    private let indexPathEditCategory: IndexPath?
-
-    private enum Constants {
-        static let maxTitleLength = 38
-    }
+    private let viewModel: CategorySettingsViewModel
 
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
@@ -50,10 +44,8 @@ final class CategorySettingsViewController: UIViewController {
     private let saveButton = CustomButton(title: "Готово")
 
     // MARK: - Initialiser
-    init(coordinator: SettingsFlowCoordinator, trackerCategoryStore: TrackerCategoryStoreProtocol, indexPathEditCategory: IndexPath?) {
-        self.coordinator = coordinator
-        self.trackerCategoryStore = trackerCategoryStore
-        self.indexPathEditCategory = indexPathEditCategory
+    init(viewModel: CategorySettingsViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -67,6 +59,7 @@ final class CategorySettingsViewController: UIViewController {
         view.backgroundColor = .white
         navigationItem.hidesBackButton = true
         setupAction()
+        bind()
         layout()
         hideKeyboardWhenTappedAround()
     }
@@ -79,58 +72,41 @@ final class CategorySettingsViewController: UIViewController {
     // MARK: - Methods
     private func setupAction() {
         saveButton.tapAction = { [weak self] in
-            self?.onSaveAction()
+            self?.viewModel.handleSaveButtonTap()
         }
     }
-// TODO: - make save new/update category in Core Data
-    private func onSaveAction() {
-        let newTitle = nameTextField.text ?? ""
-        updateCategories(with: newTitle)
-        coordinator.pop()
-    }
 
-    private func updateCategories(with title: String){
-        if let indexPath = indexPathEditCategory,
-           let editCategory = trackerCategoryStore.object(at: indexPath) {
-            trackerCategoryStore.updateCategoryTitle(previous: editCategory.title, new: title)
-        } else {
-            let newTrackerCategory = TrackerCategory(title: title, trackers: [])
-            trackerCategoryStore.addCategory(newTrackerCategory)
+    private func bind() {
+        viewModel.$savingIsAvailable.bind { [weak self] newValue in
+            self?.updateSaveButtonState(isOn: newValue)
+        }
+        viewModel.$warningText.bind { [weak self] warning in
+            self?.warningLabel.text = warning
         }
     }
 
     private func setupView() {
         title = "Новая категория"
-        saveButton.isEnabled = false
-        saveButton.updateBackground(backgroundColor: .Custom.gray)
-        if let indexPath = indexPathEditCategory,
-           let editCategory = trackerCategoryStore.object(at: indexPath) {
-            nameTextField.text = editCategory.title
+        updateSaveButtonState(isOn: viewModel.savingIsAvailable)
+        if let categoryTitle = viewModel.categoryTitle {
+            nameTextField.text = categoryTitle
             title = "Редактирование категории"
+        }
+    }
+
+    private func updateSaveButtonState(isOn: Bool) {
+        if isOn {
+            saveButton.isEnabled = true
+            saveButton.updateBackground(backgroundColor: .Custom.blackDay)
+        } else {
+            saveButton.isEnabled = false
+            saveButton.updateBackground(backgroundColor: .Custom.gray)
         }
     }
 
     @objc private func textFieldDidChange(_ textField: UITextField) {
         guard let text = textField.text else { return }
-        let isNotAvailable = trackerCategoryStore.isDuplicateOfCategory(with: text)
-
-        if !text.isEmpty, text.count <= Constants.maxTitleLength, !isNotAvailable {
-            saveButton.isEnabled = true
-            saveButton.updateBackground(backgroundColor: .Custom.blackDay)
-        }
-        else {
-            saveButton.isEnabled = false
-            saveButton.updateBackground(backgroundColor: .Custom.gray)
-        }
-
-        if isNotAvailable {
-            warningLabel.text = "Имя категории уже используется"
-        } else if Array(text).count > Constants.maxTitleLength {
-            warningLabel.text = "Ограничение \(Constants.maxTitleLength) символов"
-        } else {
-            warningLabel.text = ""
-        }
-
+        viewModel.changeCategoryTitle(title: text)
     }
 
     private func hideKeyboardWhenTappedAround() {
