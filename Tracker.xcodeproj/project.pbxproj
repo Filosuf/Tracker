@@ -13,7 +13,6 @@
 		7C06317129CC987C003F5ADE /* SettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C06317029CC987B003F5ADE /* SettingsStorage.swift */; };
 		7C06317429CC9A82003F5ADE /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C06317329CC9A82003F5ADE /* OnboardingPageViewController.swift */; };
 		7C06317629CD887A003F5ADE /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C06317529CD887A003F5ADE /* OnboardingViewController.swift */; };
-		7C06317829CDCDB9003F5ADE /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C06317729CDCDB9003F5ADE /* Debug.swift */; };
 		7C06317A29CEF9CF003F5ADE /* CategoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C06317929CEF9CF003F5ADE /* CategoriesViewModel.swift */; };
 		7C06317C29D334C3003F5ADE /* CategorySettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C06317B29D334C3003F5ADE /* CategorySettingsViewModel.swift */; };
 		7C06317F29D461C5003F5ADE /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C06317E29D461C4003F5ADE /* Observable.swift */; };
@@ -70,7 +69,6 @@
 		7C06317029CC987B003F5ADE /* SettingsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStorage.swift; sourceTree = "<group>"; };
 		7C06317329CC9A82003F5ADE /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
 		7C06317529CD887A003F5ADE /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
-		7C06317729CDCDB9003F5ADE /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debug.swift; sourceTree = "<group>"; };
 		7C06317929CEF9CF003F5ADE /* CategoriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesViewModel.swift; sourceTree = "<group>"; };
 		7C06317B29D334C3003F5ADE /* CategorySettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySettingsViewModel.swift; sourceTree = "<group>"; };
 		7C06317E29D461C4003F5ADE /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
@@ -158,7 +156,6 @@
 			children = (
 				7C06317329CC9A82003F5ADE /* OnboardingPageViewController.swift */,
 				7C06317529CD887A003F5ADE /* OnboardingViewController.swift */,
-				7C06317729CDCDB9003F5ADE /* Debug.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -507,7 +504,6 @@
 				7CB5BE4129B1F5050047C41F /* ColorCollectionViewCell.swift in Sources */,
 				7C4F75612990596C00406056 /* CustomButton.swift in Sources */,
 				7CB5BE4329B1F5760047C41F /* ColorCollectionViewDataSource.swift in Sources */,
-				7C06317829CDCDB9003F5ADE /* Debug.swift in Sources */,
 				7C4F75772996482C00406056 /* String+Extension.swift in Sources */,
 				7CC346A429C450E00067062C /* TrackerStore.swift in Sources */,
 				7C4F75362987E32C00406056 /* MainCoordinator.swift in Sources */,

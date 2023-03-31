@@ -95,15 +95,9 @@ final class CategoriesViewController: UIViewController {
     }
 
     private func showPlaceholder(_ isShown: Bool) {
-        if isShown {
-            categoriesTableView.isHidden = true
-            infoLabel.isHidden = false
-            infoImage.isHidden = false
-        } else {
-            categoriesTableView.isHidden = false
-            infoLabel.isHidden = true
-            infoImage.isHidden = true
-        }
+        categoriesTableView.isHidden = isShown
+        infoLabel.isHidden = !isShown
+        infoImage.isHidden = !isShown
     }
 
     private func layout() {

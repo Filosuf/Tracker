@@ -122,10 +122,9 @@ final class TrackerSettingsViewController: UIViewController {
 
     private lazy var emojiCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
+        layout.scrollDirection = .horizontal
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white
-        collectionView.isScrollEnabled = false
         collectionView.dataSource = emojiCollectionDataSource
         collectionView.delegate = emojiCollectionDataSource
         collectionView.register(EmojiCollectionViewCell.self, forCellWithReuseIdentifier: EmojiCollectionViewCell.identifier)
@@ -144,7 +143,7 @@ final class TrackerSettingsViewController: UIViewController {
 
     private lazy var colorCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
+        layout.scrollDirection = .horizontal
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white
         collectionView.dataSource = colorCollectionDataSource
@@ -480,27 +479,5 @@ extension TrackerSettingsViewController: CategoriesViewControllerProtocol {
     func categoriesDidUpdate(selected category: TrackerCategory) {
         currentCategory = category
         updateSaveButton()
-    }
-}
-
-// MARK: - UICollectionViewDataSource
-extension TrackerSettingsViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        Constants.emojis.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.identifier, for: indexPath) as! EmojiCollectionViewCell
-        let emoji = Constants.emojis[indexPath.row]
-        cell.setupCell(emoji: emoji)
-        return cell
-    }
-
-
-    //MARK: - UICollectionViewDelegateFlowLayout
-    private var sideInset: CGFloat { return 16}
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 52, height: 52)
     }
 }

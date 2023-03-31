@@ -30,8 +30,6 @@ final class ColorCollectionViewDataSource: NSObject, UICollectionViewDataSource,
     }
 
     //MARK: - UICollectionViewDelegateFlowLayout
-    private var sideInset: CGFloat { return 16}
-
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 52, height: 52)
     }

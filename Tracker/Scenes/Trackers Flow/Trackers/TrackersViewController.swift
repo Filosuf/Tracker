@@ -78,6 +78,7 @@ final class TrackersViewController: UIViewController {
         view.backgroundColor = .white
         setBar()
         layout()
+        setupPlaceholder()
     }
     
     // MARK: - Methods
@@ -91,10 +92,18 @@ final class TrackersViewController: UIViewController {
     }
 
     private func setupPlaceholder() {
-        if trackerStore.numberOfSections == 0 {
+        if trackerStore.trackersIsEmpty() {
             trackerCollectionView.isHidden = true
             infoLabel.isHidden = false
             infoImage.isHidden = false
+            infoImage.image = UIImage(named: "star")
+            infoLabel.text = "Что будем отслеживать?"
+        } else if trackerStore.numberOfSections == 0 {
+            trackerCollectionView.isHidden = true
+            infoLabel.isHidden = false
+            infoImage.isHidden = false
+            infoImage.image = UIImage(named: "findError")
+            infoLabel.text = "Ничего не найдено на выбранную дату"
         } else {
             trackerCollectionView.isHidden = false
             infoLabel.isHidden = true
@@ -106,10 +115,11 @@ final class TrackersViewController: UIViewController {
         coordinator.showNewTracker()
     }
 
-    @objc func handleDatePicker(_ datePicker: UIDatePicker) {
+    @objc private func handleDatePicker(_ datePicker: UIDatePicker) {
         currentDate = datePicker.date
         self.dismiss(animated: false, completion: nil)
         updateVisibleCategories()
+        setupPlaceholder()
     }
 
     private func layout() {
@@ -231,12 +241,14 @@ extension TrackersViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         textOfSearchQuery = searchController.searchBar.text ?? ""
         updateVisibleCategories()
+        setupPlaceholder()
     }
 }
 
 //MARK: - TrackerStoreDelegate
 extension TrackersViewController: TrackerStoreDelegate {
     func didUpdate(_ update: TrackerStoreUpdate) {
+        updateVisibleCategories()
         setupPlaceholder()
         trackerCollectionView.reloadData()
         //TODO: - Переделать на обновление отдельных ячеек

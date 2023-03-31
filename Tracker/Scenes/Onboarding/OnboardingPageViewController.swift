@@ -5,17 +5,16 @@
 //  Created by Filosuf on 23.03.2023.
 //
 
-import Foundation
 import UIKit
 
 
 final class OnboardingPageViewController: UIPageViewController {
     // MARK: - Properties
-    let settingsStorage: SettingsStorageProtocol
-    let coordinator: MainCoordinator
-    let pages: [UIViewController]
+    private let settingsStorage: SettingsStorageProtocol
+    private let coordinator: MainCoordinator
+    private let pages: [UIViewController]
 
-    lazy var pageControl: UIPageControl = {
+    private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
@@ -68,7 +67,7 @@ final class OnboardingPageViewController: UIPageViewController {
             setViewControllers([page], direction: .forward, animated: true, completion: nil)
         }
     }
-    
+
     private func skipOnboarding() {
         settingsStorage.setSkipOnboarding(true)
         coordinator.switchToTabBarController()

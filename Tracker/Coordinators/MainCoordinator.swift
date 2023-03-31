@@ -26,16 +26,16 @@ final class MainCoordinatorImp: MainCoordinator {
 
     // MARK: - Methods
     func startApplication(skipOnboarding: Bool) -> UIViewController {
-//        if skipOnboarding == true {
-//            return getTabBarController()
-//        } else {
+        if skipOnboarding {
+            return getTabBarController()
+        } else {
             return controllersFactory.makeOnboarding(settingsStorage: SettingsStorage(), coordinator: self)
-//        }
+        }
     }
 
     func switchToTabBarController() {
         // Получаем экземпляр `Window` приложения
-        guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
+        guard let window = UIApplication.shared.windows.first else { assertionFailure("Invalid Configuration"); return }
         window.rootViewController = getTabBarController()
     }
 

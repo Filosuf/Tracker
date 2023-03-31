@@ -29,12 +29,13 @@ final class ViewControllersFactory {
     }
 
     func makeCategoriesViewController(coordinator: SettingsFlowCoordinator,
-                                      trackerCategoryStore: TrackerCategoryStoreProtocol,
+                                      trackerCategoryStore: TrackerCategoryStore,
                                       current category: TrackerCategory?,
                                       delegate: CategoriesViewControllerProtocol
     ) -> CategoriesViewController {
         let viewModel = CategoriesViewModel(categoryStore: trackerCategoryStore, coordinator: coordinator, current: category, delegate: delegate)
         let viewController = CategoriesViewController(viewModel: viewModel)
+        trackerCategoryStore.delegate = viewModel
         return viewController
     }
 

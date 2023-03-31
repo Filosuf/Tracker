@@ -23,6 +23,7 @@ protocol TrackerStoreProtocol {
     func numberOfRowsInSection(_ section: Int) -> Int
     func sectionTitle(for section: Int) -> String
     func object(at: IndexPath) -> (Tracker?, [TrackerRecord])
+    func trackersIsEmpty() -> Bool
     func saveTracker(_ tracker: Tracker, titleCategory: String)
     func deleteTracker(at indexPath: IndexPath)
 }
@@ -99,6 +100,10 @@ extension TrackerStore: TrackerStoreProtocol {
         let recordsOptional = trackerCoreData.recordSorted.map { $0.toTrackerRecord() }
         let records = recordsOptional.compactMap { $0 }
         return (tracker, records)
+    }
+
+    func trackersIsEmpty() -> Bool {
+        dataStore.trackersIsEmpty()
     }
 
     func saveTracker(_ tracker: Tracker, titleCategory: String) {

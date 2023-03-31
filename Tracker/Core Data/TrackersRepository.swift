@@ -89,7 +89,13 @@ extension TrackersRepository: TrackerDataStore {
 
         saveContext()
     }
-    
+
+    func trackersIsEmpty() -> Bool {
+        let request = TrackerCoreData.fetchRequest()
+        let tracker = (try? context.fetch(request))?.first
+        return tracker == nil
+    }
+
     func deleteTracker(_ tracker: Tracker) {
 
     }

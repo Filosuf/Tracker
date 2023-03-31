@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CellViewModel {
+struct CellModel {
     let title: String
     let isSetCheckmark: Bool
 }
@@ -19,8 +19,7 @@ final class CategoriesViewModel {
     private let coordinator: SettingsFlowCoordinator
     private let delegate: CategoriesViewControllerProtocol
 
-    @Observable private(set) var currentCategory: TrackerCategory? 
-//    @Observable private(set) var placeholderIsShown = true
+    @Observable private(set) var currentCategory: TrackerCategory?
     @Observable private(set) var numberOfCategories = 0
 
     // MARK: - Initialiser
@@ -48,10 +47,10 @@ final class CategoriesViewModel {
         trackerCategoryStore.numberOfRowsInSection(section)
     }
 
-    func fetchViewModelForCell(with indexPath: IndexPath) -> CellViewModel? {
+    func fetchViewModelForCell(with indexPath: IndexPath) -> CellModel? {
         guard let category = trackerCategoryStore.object(at: indexPath) else { return nil }
         let isSetCheckmark = category == currentCategory
-        let cellViewModel = CellViewModel(title: category.title, isSetCheckmark: isSetCheckmark)
+        let cellViewModel = CellModel(title: category.title, isSetCheckmark: isSetCheckmark)
         return cellViewModel
     }
 }

@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol CategorySettingsViewControllerProtocol {
-    func categorySettingsDidUpdated(categories: [TrackerCategory])
-}
-
 final class CategorySettingsViewController: UIViewController {
     // MARK: - Properties
     private let viewModel: CategorySettingsViewModel
@@ -95,13 +91,8 @@ final class CategorySettingsViewController: UIViewController {
     }
 
     private func updateSaveButtonState(isOn: Bool) {
-        if isOn {
-            saveButton.isEnabled = true
-            saveButton.updateBackground(backgroundColor: .Custom.blackDay)
-        } else {
-            saveButton.isEnabled = false
-            saveButton.updateBackground(backgroundColor: .Custom.gray)
-        }
+        saveButton.isEnabled = isOn
+        saveButton.updateBackground(backgroundColor: isOn ? .Custom.blackDay : .Custom.gray)
     }
 
     @objc private func textFieldDidChange(_ textField: UITextField) {
