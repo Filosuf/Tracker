@@ -19,10 +19,9 @@ final class OnboardingPageViewController: UIPageViewController {
         let pageControl = UIPageControl()
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
-
         pageControl.currentPageIndicatorTintColor = .Custom.blackDay
         pageControl.pageIndicatorTintColor = .Custom.gray
-
+        pageControl.addTarget(self, action: #selector(pageControlHandle), for: .valueChanged)
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         return pageControl
     }()
@@ -62,6 +61,14 @@ final class OnboardingPageViewController: UIPageViewController {
         }
     }
 
+    @objc private func pageControlHandle(sender: UIPageControl){
+        let index = sender.currentPage
+        if index < pages.count {
+            let page = pages[index]
+            setViewControllers([page], direction: .forward, animated: true, completion: nil)
+        }
+    }
+    
     private func skipOnboarding() {
         settingsStorage.setSkipOnboarding(true)
         coordinator.switchToTabBarController()

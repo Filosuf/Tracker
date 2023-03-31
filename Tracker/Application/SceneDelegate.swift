@@ -23,8 +23,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let mainCoordinator: MainCoordinator = MainCoordinatorImp(controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory)
     
         window?.rootViewController = mainCoordinator.startApplication(skipOnboarding: settingsStorage.skipOnboarding)
-//        window?.rootViewController = Onboarding2ViewController()
-//        window?.rootViewController = OnboardingPageViewController()
         window?.makeKeyAndVisible()
         window?.overrideUserInterfaceStyle = .light
     }

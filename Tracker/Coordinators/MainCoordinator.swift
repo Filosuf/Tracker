@@ -26,11 +26,11 @@ final class MainCoordinatorImp: MainCoordinator {
 
     // MARK: - Methods
     func startApplication(skipOnboarding: Bool) -> UIViewController {
-        if skipOnboarding == true {
-            return getTabBarController()
-        } else {
+//        if skipOnboarding == true {
+//            return getTabBarController()
+//        } else {
             return controllersFactory.makeOnboarding(settingsStorage: SettingsStorage(), coordinator: self)
-        }
+//        }
     }
 
     func switchToTabBarController() {
