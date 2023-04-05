@@ -122,6 +122,19 @@ final class TrackersViewController: UIViewController {
         setupPlaceholder()
     }
 
+    private func makePreview(indexPath: IndexPath) -> UIViewController {
+        let viewController = UIViewController()
+        let preview = TrackersSubviewCell(frame: CGRect(x: 0, y: 0, width: 167, height: 90))
+        viewController.view = preview
+        if let tracker = trackerStore.object(at: indexPath) {
+            preview.setupView(tracker: tracker)
+            viewController.view.backgroundColor = tracker.color
+        }
+        viewController.preferredContentSize = preview.frame.size
+
+        return viewController
+    }
+
     private func layout() {
         [infoImage,
          infoLabel,
@@ -238,7 +251,10 @@ extension TrackersViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
 
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { actions in
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: {
+            let customView = self.makePreview(indexPath: indexPath)
+            return customView
+        }) { actions in
                 return UIMenu(children: [
                     UIAction(title: "Закрепить") { [weak self] _ in
 //                        self?.makeBold(indexPath: indexPath)
@@ -289,4 +305,21 @@ extension TrackersViewController: TrackerStoreDelegate {
 //            trackerCollectionView.deleteRows(at: deletedIndexPaths, with: .fade)
 //        }
     }
+}
+
+extension TrackersViewController {
+
+    func makeRatePreview(indexPath: IndexPath) -> UIViewController {
+        let viewController = UIViewController()
+        let preview = TrackersSubviewCell(frame: CGRect(x: 0, y: 0, width: 167, height: 90))
+        viewController.view = preview
+        if let tracker = trackerStore.object(at: indexPath) {
+            preview.setupView(tracker: tracker)
+            viewController.view.backgroundColor = tracker.color
+        }
+        viewController.preferredContentSize = preview.frame.size
+
+        return viewController
+    }
+
 }

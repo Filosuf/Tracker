@@ -49,6 +49,7 @@
 		7C4F7580299CDF5500406056 /* TabBarPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4F757F299CDF5300406056 /* TabBarPage.swift */; };
 		7C76144E29D81FA900A7AA27 /* TrackerSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C76144D29D81FA900A7AA27 /* TrackerSettingsViewModel.swift */; };
 		7CA7C1CC29DB0FB4007C6D7D /* ScheduleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA7C1CB29DB0FB4007C6D7D /* ScheduleViewModel.swift */; };
+		7CA7C1CE29DD139B007C6D7D /* TrackersSubviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA7C1CD29DD139B007C6D7D /* TrackersSubviewCell.swift */; };
 		7CB5BE3A29B0DC5E0047C41F /* EmojiCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB5BE3929B0DC5E0047C41F /* EmojiCollectionViewCell.swift */; };
 		7CB5BE3C29B0DCB00047C41F /* EmojiCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB5BE3B29B0DCB00047C41F /* EmojiCollectionViewDataSource.swift */; };
 		7CB5BE4129B1F5050047C41F /* ColorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB5BE4029B1F5050047C41F /* ColorCollectionViewCell.swift */; };
@@ -111,6 +112,7 @@
 		7C4F757F299CDF5300406056 /* TabBarPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarPage.swift; sourceTree = "<group>"; };
 		7C76144D29D81FA900A7AA27 /* TrackerSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerSettingsViewModel.swift; sourceTree = "<group>"; };
 		7CA7C1CB29DB0FB4007C6D7D /* ScheduleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewModel.swift; sourceTree = "<group>"; };
+		7CA7C1CD29DD139B007C6D7D /* TrackersSubviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersSubviewCell.swift; sourceTree = "<group>"; };
 		7CB5BE3929B0DC5E0047C41F /* EmojiCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCollectionViewCell.swift; sourceTree = "<group>"; };
 		7CB5BE3B29B0DCB00047C41F /* EmojiCollectionViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCollectionViewDataSource.swift; sourceTree = "<group>"; };
 		7CB5BE4029B1F5050047C41F /* ColorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -271,6 +273,7 @@
 				7C4F752C2987C21000406056 /* TrackersViewController.swift */,
 				7C4F7558298D223100406056 /* HeaderCollectionView.swift */,
 				7C4F75432989518200406056 /* TrackersCollectionViewCell.swift */,
+				7CA7C1CD29DD139B007C6D7D /* TrackersSubviewCell.swift */,
 			);
 			path = Trackers;
 			sourceTree = "<group>";
@@ -532,6 +535,7 @@
 				7C4F752D2987C21000406056 /* TrackersViewController.swift in Sources */,
 				7CB5BE6F29BB24B10047C41F /* TrackerCategoryDataStore.swift in Sources */,
 				7C4F752A2987C19500406056 /* StatsViewController.swift in Sources */,
+				7CA7C1CE29DD139B007C6D7D /* TrackersSubviewCell.swift in Sources */,
 				7CC346A629C4510E0067062C /* TrackerDataStore.swift in Sources */,
 				7C4F74EC2986509000406056 /* SceneDelegate.swift in Sources */,
 				7C4F7570299381D500406056 /* CategoriesTableViewCell.swift in Sources */,
