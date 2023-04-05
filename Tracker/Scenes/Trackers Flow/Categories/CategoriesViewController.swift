@@ -172,4 +172,17 @@ extension CategoriesViewController: UITableViewDelegate {
             cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         }
     }
+
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { actions in
+            return UIMenu(children: [
+                UIAction(title: "Редактировать") { [weak self] _ in
+                    self?.viewModel.editCategory(indexPath: indexPath)
+                },
+                UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+                    self?.viewModel.deleteCategory(indexPath: indexPath)
+                },
+            ])
+        }
+    }
 }

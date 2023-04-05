@@ -13,5 +13,5 @@ protocol TrackerCategoryDataStore {
     func add(_ trackerCategory: TrackerCategory)
     func isDuplicateOfCategory(with title: String) -> Bool
     func updateCategoryTitle(previous: String, new: String)
-//    func delete(_ record: NSManagedObject) throws
+    func delete(_ trackerCategory: TrackerCategoryCoreData)
 }

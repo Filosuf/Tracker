@@ -175,7 +175,8 @@ extension TrackersViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackersCollectionViewCell.identifier, for: indexPath) as! TrackersCollectionViewCell
-        let (tracker, records) = trackerStore.object(at: indexPath)
+        let tracker = trackerStore.object(at: indexPath)
+        let records = trackerStore.records(at: indexPath)
         guard let tracker = tracker  else { return UICollectionViewCell()}
         let numberOfCompleted = records.count
         let isTodayCompleted = records.contains(where: { $0.date == currentDate })
@@ -233,6 +234,35 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 extension TrackersViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
+    }
+
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { actions in
+                return UIMenu(children: [
+                    UIAction(title: "Закрепить") { [weak self] _ in
+//                        self?.makeBold(indexPath: indexPath)
+                    },
+                    UIAction(title: "Редактировать") { [weak self] _ in
+                        self?.editTacker(indexPath: indexPath)
+                    },
+                    UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+                        self?.deleteTracker(indexPath: indexPath)
+                    },
+                ])
+            }
+        }
+
+    private func editTacker(indexPath: IndexPath) {
+        guard let schedule = trackerStore.object(at: indexPath)?.schedule else { return }
+        let trackerStyle: TrackerStyle = schedule.isEmpty ? .editEvent : .editHabit
+        coordinator.showTrackerSettings(trackerStyle: trackerStyle, indexPathEditTracker: indexPath)
+    }
+
+    private func deleteTracker(indexPath: IndexPath) {
+        coordinator.showDeleteAlert { [weak self] in
+            self?.trackerStore.deleteTracker(at: indexPath)
+        }
     }
 }
 

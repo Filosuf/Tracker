@@ -7,13 +7,6 @@
 
 import UIKit
 
-enum TrackerStyle {
-    case newHabit
-    case newEvent
-    case editHabit(indexPath: IndexPath, currentCategory: TrackerCategory)
-    case editEvent(indexPath: IndexPath, currentCategory: TrackerCategory)
-}
-
 enum SettingsType: String {
     case category = "Категория"
     case schedule = "Расписание"
@@ -21,34 +14,14 @@ enum SettingsType: String {
 
 final class TrackerSettingsViewController: UIViewController {
     // MARK: - Properties
-    private let coordinator: SettingsFlowCoordinator
-    private let trackerStore: TrackerStoreProtocol
-    private var indexPathEditTracker: IndexPath?
-    private var currentCategory: TrackerCategory?
-    //    private var tracker: Tracker?
-//    private var categories = [TrackerCategory]()
-    private let trackerStyle: TrackerStyle
+    private var viewModel: TrackerSettingsViewModel
+
     private var nameTextFieldTop: CGFloat = 0
     private var settingsTableViewHeight: CGFloat { CGFloat(nameSettingsArray.count * 75 - 1) }
     private var settingsTableViewTopConstraint: NSLayoutConstraint?
     private var nameSettingsArray = [SettingsType]()
-    private let emojiCollectionDataSource = EmojiCollectionViewDataSource(emojis: Constants.emojis)
-    private let colorCollectionDataSource = ColorCollectionViewDataSource(colors: Constants.colorsName)
-
-    //Оперируем с отдельными свойствами tracker, для удобства, когда tracker = nil
-    private var tempTrackerId: String?
-    private var tempTrackerName: String?
-    private var tempTrackerColor: UIColor?
-    private var tempTrackerEmoji: String?
-    private var tempTrackerSchedule = [DayOfWeek]()
-
-    private enum Constants {
-        static let maxNameLength = 38
-        static let emojis = ["🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
-        static let colorsName = ["color-1", "color-2", "color-3", "color-4", "color-5", "color-6", "color-7", "color-8", "color-9",
-                                 "color-10", "color-11", "color-12", "color-13", "color-14", "color-15", "color-16", "color-17", "color-18"
-        ]
-    }
+    private lazy var emojiCollectionDataSource = EmojiCollectionViewDataSource(emojis: viewModel.emojis)
+    private lazy var colorCollectionDataSource = ColorCollectionViewDataSource(colors: viewModel.colorsName)
 
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -68,15 +41,36 @@ final class TrackerSettingsViewController: UIViewController {
     private let numberOfDayLabel: UILabel = {
         let label = UILabel()
         label.textColor = .Custom.blackDay
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.boldSystemFont(ofSize: 32)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "5 days"
         return label
     }()
 
+    private let plusButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .Custom.orange
+        button.setTitle("+", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 34 / 2
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(addRecord), for: .touchUpInside)
+        return button
+    }()
+
+    private let minusButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .Custom.orange
+        button.setTitle("-", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 34 / 2
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(removeRecord), for: .touchUpInside)
+        return button
+    }()
+
     private let warningLabel: UILabel = {
         let label = UILabel()
-        label.text = "Ограничение \(Constants.maxNameLength) символов"
         label.font = UIFont.systemFont(ofSize: 17)
         label.textColor = .Custom.red
         label.textAlignment = .center
@@ -154,10 +148,8 @@ final class TrackerSettingsViewController: UIViewController {
     }()
 
     // MARK: - Initialiser
-    init(coordinator: SettingsFlowCoordinator, trackerStyle: TrackerStyle, trackerStore: TrackerStoreProtocol ) {
-        self.coordinator = coordinator
-        self.trackerStyle = trackerStyle
-        self.trackerStore = trackerStore
+    init(viewModel: TrackerSettingsViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -169,12 +161,12 @@ final class TrackerSettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        saveButton.isEnabled = false
-        updateProperties(with: trackerStyle)
-        setupNavBar()
+        setupView()
         layout()
         setupAction()
         hideKeyboardWhenTappedAround()
+        initialization()
+        bind()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -183,53 +175,125 @@ final class TrackerSettingsViewController: UIViewController {
     }
 
     // MARK: - Methods
-    ///update properties for edit tracker
-    private func updateProperties(with style: TrackerStyle) {
-        switch trackerStyle {
-        case .newHabit: return
-        case .newEvent: return
-        case .editHabit(let indexPath, let currentCategory):
-            self.indexPathEditTracker = indexPath
-            self.currentCategory = currentCategory
-            self.updateTrackerProperties(with: indexPath)
-        case .editEvent(let indexPath, let currentCategory):
-            self.indexPathEditTracker = indexPath
-            self.currentCategory = currentCategory
-            self.updateTrackerProperties(with: indexPath)
+    private func initialization() {
+        if let tracker = viewModel.trackerModel {
+            numberOfDayLabel.text = viewModel.recordsString
+
+            nameTextField.text = tracker.name
+            var colorIndex: Int?
+            for (index, colorName) in viewModel.colorsName.enumerated() {
+                if UIColor(named: colorName)?.hexValue == tracker.color?.hexValue {
+                    colorIndex = index
+                }
+            }
+            let colorIndexPath = IndexPath(item: colorIndex ?? 0, section: 0)
+
+            var emojiIndex: Int?
+            for (index, emoji) in viewModel.emojis.enumerated() {
+                if emoji == tracker.emoji {
+                    emojiIndex = index
+                }
+            }
+            let emojiIndexPath = IndexPath(item: emojiIndex ?? 0, section: 0)
+            emojiCollectionView.selectItem(at: emojiIndexPath, animated: true, scrollPosition: .centeredVertically)
+            colorCollectionView.selectItem(at: IndexPath(item: 6, section: 0), animated: true, scrollPosition: .top)
         }
     }
 
-    private func updateTrackerProperties(with indexPath: IndexPath) {
-        let (tracker, _) = trackerStore.object(at: indexPath)
-        guard let tracker = tracker else { return }
+    private func bind() {
+        viewModel.saveButtonStateDidChange = { [weak self] isEnable in
+            self?.updateSaveButtonState(isEnable: isEnable)
+        }
+        viewModel.warningTextDidChange = { [weak self] in
+            self?.showWarningLabelIfNeeded(text: self?.viewModel.warningText)
+        }
+        viewModel.recordsStringDidChange = { [weak self] in
+            self?.numberOfDayLabel.text = self?.viewModel.recordsString
+        }
+    }
 
-        tempTrackerId = tracker.id
-        tempTrackerName = tracker.name
-        tempTrackerColor = tracker.color
-        tempTrackerEmoji = tracker.emoji
-        tempTrackerSchedule = tracker.schedule
+    @objc private func addRecord() {
+        viewModel.addRecord()
+    }
+
+    @objc private func removeRecord() {
+        viewModel.removeRecord()
     }
 
     @objc private func textFieldDidChange(_ textField: UITextField) {
-        tempTrackerName = textField.text
-        showWarningLabelIfNeeded()
-        updateSaveButton()
+        guard let name = textField.text else { return }
+        viewModel.updateTrackerName(name: name)
     }
 
-    private func showWarningLabelIfNeeded() {
-        guard let name = nameTextField.text else { return }
-        if name.count <= Constants.maxNameLength {
-            if !warningLabel.isHidden {
-                settingsTableViewTopConstraint?.constant = 24
-                view.setNeedsLayout()
-            }
-            warningLabel.isHidden = true
-        } else {
-            if warningLabel.isHidden {
-                settingsTableViewTopConstraint?.constant = 62
-                warningLabel.isHidden = false
-                view.setNeedsLayout()
-            }
+    private func updateSaveButtonState(isEnable: Bool) {
+        saveButton.updateBackground(backgroundColor: isEnable ? .Custom.blackDay : .Custom.gray)
+        saveButton.isEnabled = isEnable
+    }
+
+    private func showWarningLabelIfNeeded(text: String?) {
+        warningLabel.text = text
+        warningLabel.isHidden = text == nil
+        let newConstraint: CGFloat = text == nil ? 24 : 62
+        if settingsTableViewTopConstraint?.constant != newConstraint {
+            settingsTableViewTopConstraint?.constant = newConstraint
+            view.setNeedsLayout()
+        }
+    }
+
+    private func setupView() {
+        switch viewModel.trackerStyle {
+        case .newHabit:
+            title = "Новая привычка"
+            numberOfDayLabel.isHidden = true
+            minusButton.isHidden = true
+            plusButton.isHidden = true
+            nameTextFieldTop = 0
+            nameSettingsArray = [.category, .schedule]
+            saveButton.updateButton(title: "Создать", backgroundColor: .Custom.gray)
+            saveButton.isEnabled = false
+        case .newEvent:
+            title = "Новое нерегулярное событие"
+            numberOfDayLabel.isHidden = true
+            minusButton.isHidden = true
+            plusButton.isHidden = true
+            nameTextFieldTop = 0
+            nameSettingsArray = [.category]
+            saveButton.updateButton(title: "Создать", backgroundColor: .Custom.gray)
+            saveButton.isEnabled = false
+        case .editHabit:
+            title = "Редактирование привычки"
+            numberOfDayLabel.isHidden = false
+            minusButton.isHidden = false
+            plusButton.isHidden = false
+            nameTextFieldTop = 102
+            nameSettingsArray = [.category, .schedule]
+            saveButton.updateButton(title: "Сохранить", backgroundColor: .Custom.blackDay)
+            saveButton.isEnabled = true
+        case .editEvent:
+            title = "Редактирование нерегулярного события"
+            numberOfDayLabel.isHidden = false
+            minusButton.isHidden = false
+            plusButton.isHidden = false
+            nameTextFieldTop = 102
+            nameSettingsArray = [.category]
+            saveButton.updateButton(title: "Сохранить", backgroundColor: .Custom.blackDay)
+            saveButton.isEnabled = true
+        }
+    }
+
+    private func setupAction() {
+        cancelButton.tapAction = { [weak self] in
+            self?.viewModel.cancelButtonHandle()
+        }
+        saveButton.tapAction = { [weak self] in
+            self?.viewModel.saveButtonHandle()
+        }
+        emojiCollectionDataSource.tapAction = { [weak self] emoji in
+            self?.viewModel.updateEmoji(emoji)
+        }
+        colorCollectionDataSource.tapAction = { [weak self] colorName in
+            let color = UIColor(named: colorName)
+            self?.viewModel.updateColor(color)
         }
     }
 
@@ -239,106 +303,16 @@ final class TrackerSettingsViewController: UIViewController {
         view.addGestureRecognizer(tap)
     }
 
-    @objc func dismissKeyboard() {
+    @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
-
-
-    private func setupNavBar() {
-        navigationItem.hidesBackButton = true
-        switch trackerStyle {
-        case .newHabit:
-            title = "Новая привычка"
-        case .newEvent:
-            title = "Новое нерегулярное событие"
-        case .editHabit:
-            title = "Редактирование привычки"
-        case .editEvent:
-            title = "Редактирование нерегулярного события"
-        }
-    }
-
-    private func setupView() {
-        switch trackerStyle {
-        case .newHabit:
-            numberOfDayLabel.isHidden = true
-            nameTextFieldTop = 0
-            nameSettingsArray = [.category, .schedule]
-            saveButton.updateButton(title: "Создать", backgroundColor: .gray)
-        case .newEvent:
-            numberOfDayLabel.isHidden = true
-            nameTextFieldTop = 0
-            nameSettingsArray = [.category]
-            saveButton.updateButton(title: "Создать", backgroundColor: .gray)
-        case .editHabit:
-            title = "Редактирование привычки"
-        case .editEvent:
-            title = "Редактирование нерегулярного события"
-        }
-    }
-
-    private func setupAction() {
-        cancelButton.tapAction = { [weak self] in
-            self?.coordinator.dismissSettings()
-        }
-        saveButton.tapAction = { [weak self] in
-            self?.onSaveAction()
-        }
-        emojiCollectionDataSource.tapAction = { [weak self] emoji in
-            self?.tempTrackerEmoji = emoji
-            self?.updateSaveButton()
-        }
-        colorCollectionDataSource.tapAction = { [weak self] colorName in
-            self?.tempTrackerColor = UIColor(named: colorName)
-            self?.updateSaveButton()
-        }
-    }
-
-    private func onSaveAction() {
-        addOrUpdateTracker()
-        coordinator.dismissSettings()
-    }
-
-    private func addOrUpdateTracker() {
-        guard let currentCategory = currentCategory else  { return }
-        let id = tempTrackerId ?? UUID().uuidString.lowercased()
-        let name = tempTrackerName ?? "default name"
-        let color = tempTrackerColor ?? .systemPink //debug default value
-        let emoji = tempTrackerEmoji ?? "🍏"
-        let newOrEditTracker = Tracker(id: id, name: name, color: color, emoji: emoji, schedule: tempTrackerSchedule)
-
-        trackerStore.saveTracker(newOrEditTracker, titleCategory: currentCategory.title)
-    }
-
-    private func scheduleToString(schedule: [DayOfWeek]) -> String {
-        guard schedule.count != DayOfWeek.allCases.count else { return "Каждый день" }
-
-        let scheduleSorted = schedule.sorted()
-        let scheduleShortName = scheduleSorted.map { $0.shortName }.joined(separator: ", ")
-        return scheduleShortName
-    }
-
-    private func updateSaveButton() {
-        guard let name = nameTextField.text else { return }
-        if !name.isEmpty,
-           name.count <= Constants.maxNameLength,
-           currentCategory != nil,
-           tempTrackerEmoji != nil,
-           tempTrackerColor != nil {
-            saveButton.isEnabled = true
-            saveButton.updateBackground(backgroundColor: .Custom.blackDay)
-        }
-        else {
-            saveButton.isEnabled = false
-            saveButton.updateBackground(backgroundColor: .Custom.gray)
-        }
-    }
-
 
     private func layout() {
         setupView()
 
-        [numberOfDayLabel,
+        [plusButton,
+         numberOfDayLabel,
+         minusButton,
          nameTextField,
          warningLabel,
          settingsTableView,
@@ -359,13 +333,23 @@ final class TrackerSettingsViewController: UIViewController {
         settingsTableViewTopConstraint?.isActive = true
 
         NSLayoutConstraint.activate([
+            minusButton.centerYAnchor.constraint(equalTo: numberOfDayLabel.centerYAnchor),
+            minusButton.trailingAnchor.constraint(equalTo: numberOfDayLabel.leadingAnchor, constant: -24),
+            minusButton.heightAnchor.constraint(equalToConstant: 34),
+            minusButton.widthAnchor.constraint(equalToConstant: 34),
+
+            plusButton.centerYAnchor.constraint(equalTo: numberOfDayLabel.centerYAnchor),
+            plusButton.leadingAnchor.constraint(equalTo: numberOfDayLabel.trailingAnchor, constant: 24),
+            plusButton.heightAnchor.constraint(equalToConstant: 34),
+            plusButton.widthAnchor.constraint(equalToConstant: 34),
+
             numberOfDayLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             numberOfDayLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
 
             nameTextField.heightAnchor.constraint(equalToConstant: 75),
             nameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             nameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            nameTextField.topAnchor.constraint(equalTo: numberOfDayLabel.bottomAnchor, constant: nameTextFieldTop),
+            nameTextField.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: nameTextFieldTop),
 
             warningLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             warningLabel.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 8),
@@ -411,7 +395,7 @@ final class TrackerSettingsViewController: UIViewController {
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: cancelButton.topAnchor)
+            scrollView.bottomAnchor.constraint(equalTo: cancelButton.topAnchor, constant: -16)
 
         ])
     }
@@ -426,11 +410,11 @@ extension TrackerSettingsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "identifier")
         cell.textLabel?.text = nameSettingsArray[indexPath.row].rawValue
-        var detailText = ""
+        var detailText: String?
         if nameSettingsArray[indexPath.row] == .category {
-            detailText = currentCategory?.title ?? ""
+            detailText = viewModel.trackerCategory?.title
         } else {
-            detailText = scheduleToString(schedule: tempTrackerSchedule)
+            detailText = viewModel.trackerModel?.schedule
         }
         cell.detailTextLabel?.text = detailText
         cell.textLabel?.font = UIFont.systemFont(ofSize: 18)
@@ -452,9 +436,9 @@ extension TrackerSettingsViewController: UITableViewDelegate {
         let nameSettings = nameSettingsArray[indexPath.row]
         switch nameSettings {
         case .category:
-            coordinator.showCategories(current: currentCategory, delegate: self)
+            viewModel.categoryCellTapHandle()
         case .schedule:
-            coordinator.showSchedule(schedule: tempTrackerSchedule, delegate: self)
+            viewModel.scheduleCellTapHandle()
         }
     }
 }
@@ -467,17 +451,4 @@ extension TrackerSettingsViewController: UITextFieldDelegate {
     }
 }
 
-// MARK: - ScheduleViewControllerProtocol
-extension TrackerSettingsViewController: ScheduleViewControllerProtocol {
-    func scheduleDidUpdate(schedule: [DayOfWeek]) {
-        tempTrackerSchedule = schedule
-        updateSaveButton()
-    }
-}
-// MARK: - CategoriesViewControllerProtocol
-extension TrackerSettingsViewController: CategoriesViewControllerProtocol {
-    func categoriesDidUpdate(selected category: TrackerCategory) {
-        currentCategory = category
-        updateSaveButton()
-    }
-}
+

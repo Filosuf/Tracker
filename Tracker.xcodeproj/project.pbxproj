@@ -47,6 +47,8 @@
 		7C4F757829964A7F00406056 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 7C4F757A29964A7F00406056 /* Localizable.stringsdict */; };
 		7C4F757E299A4A3100406056 /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4F757D299A4A3000406056 /* Date+Extension.swift */; };
 		7C4F7580299CDF5500406056 /* TabBarPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4F757F299CDF5300406056 /* TabBarPage.swift */; };
+		7C76144E29D81FA900A7AA27 /* TrackerSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C76144D29D81FA900A7AA27 /* TrackerSettingsViewModel.swift */; };
+		7CA7C1CC29DB0FB4007C6D7D /* ScheduleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA7C1CB29DB0FB4007C6D7D /* ScheduleViewModel.swift */; };
 		7CB5BE3A29B0DC5E0047C41F /* EmojiCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB5BE3929B0DC5E0047C41F /* EmojiCollectionViewCell.swift */; };
 		7CB5BE3C29B0DCB00047C41F /* EmojiCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB5BE3B29B0DCB00047C41F /* EmojiCollectionViewDataSource.swift */; };
 		7CB5BE4129B1F5050047C41F /* ColorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB5BE4029B1F5050047C41F /* ColorCollectionViewCell.swift */; };
@@ -107,6 +109,8 @@
 		7C4F757C29965B4300406056 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		7C4F757D299A4A3000406056 /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 		7C4F757F299CDF5300406056 /* TabBarPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarPage.swift; sourceTree = "<group>"; };
+		7C76144D29D81FA900A7AA27 /* TrackerSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerSettingsViewModel.swift; sourceTree = "<group>"; };
+		7CA7C1CB29DB0FB4007C6D7D /* ScheduleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewModel.swift; sourceTree = "<group>"; };
 		7CB5BE3929B0DC5E0047C41F /* EmojiCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCollectionViewCell.swift; sourceTree = "<group>"; };
 		7CB5BE3B29B0DCB00047C41F /* EmojiCollectionViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCollectionViewDataSource.swift; sourceTree = "<group>"; };
 		7CB5BE4029B1F5050047C41F /* ColorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -275,6 +279,7 @@
 			isa = PBXGroup;
 			children = (
 				7C4F752F2987C34B00406056 /* TrackerSettingsViewController.swift */,
+				7C76144D29D81FA900A7AA27 /* TrackerSettingsViewModel.swift */,
 				7CB5BE3829B0DBFB0047C41F /* Emoji Collection */,
 				7CB5BE3F29B1EDD50047C41F /* Color Collection */,
 			);
@@ -354,6 +359,7 @@
 			isa = PBXGroup;
 			children = (
 				7C4F75662990F43500406056 /* ScheduleViewController.swift */,
+				7CA7C1CB29DB0FB4007C6D7D /* ScheduleViewModel.swift */,
 				7C4F756A29914E7700406056 /* ScheduleTableViewCell.swift */,
 			);
 			path = Schedule;
@@ -501,6 +507,7 @@
 				7CB5BE7029BB24B10047C41F /* TrackersRepository.swift in Sources */,
 				7C06313529C8AB29003F5ADE /* TrackerRecordDataStore.swift in Sources */,
 				7C4F75732993E1D100406056 /* CategorySettingsViewController.swift in Sources */,
+				7CA7C1CC29DB0FB4007C6D7D /* ScheduleViewModel.swift in Sources */,
 				7CB5BE4129B1F5050047C41F /* ColorCollectionViewCell.swift in Sources */,
 				7C4F75612990596C00406056 /* CustomButton.swift in Sources */,
 				7CB5BE4329B1F5760047C41F /* ColorCollectionViewDataSource.swift in Sources */,
@@ -513,6 +520,7 @@
 				7C4F7559298D223200406056 /* HeaderCollectionView.swift in Sources */,
 				7C4F7580299CDF5500406056 /* TabBarPage.swift in Sources */,
 				7C4F75692991164400406056 /* CancelButton.swift in Sources */,
+				7C76144E29D81FA900A7AA27 /* TrackerSettingsViewModel.swift in Sources */,
 				7C4F755B298D3B3E00406056 /* SettingsFlowCoordinator.swift in Sources */,
 				7CB5BE7629BB5C3D0047C41F /* TrackerCoreData.swift in Sources */,
 				7C06317129CC987C003F5ADE /* SettingsStorage.swift in Sources */,

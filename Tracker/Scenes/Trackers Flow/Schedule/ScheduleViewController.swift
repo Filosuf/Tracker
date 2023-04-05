@@ -13,10 +13,7 @@ protocol ScheduleViewControllerProtocol {
 
 final class ScheduleViewController: UIViewController {
     // MARK: - Properties
-    private var coordinator: SettingsFlowCoordinator
-    private var delegate: ScheduleViewControllerProtocol
-    private var week = DayOfWeek.allCases
-    private var schedule = [DayOfWeek]()
+    private var viewModel: ScheduleViewModel
 
     private let okButton = CustomButton(title: "Готово")
 
@@ -33,10 +30,8 @@ final class ScheduleViewController: UIViewController {
     }()
     
     // MARK: - Initialiser
-    init(coordinator: SettingsFlowCoordinator, schedule: [DayOfWeek], delegate: ScheduleViewControllerProtocol) {
-        self.coordinator = coordinator
-        self.schedule = schedule
-        self.delegate = delegate
+    init(viewModel: ScheduleViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -55,24 +50,10 @@ final class ScheduleViewController: UIViewController {
     }
     
     // MARK: - Methods
-    private func updateSchedule(for day: DayOfWeek, with isOn: Bool) {
-        if isOn {
-            schedule.append(day)
-        } else {
-            schedule.removeAll(where: { $0 == day })
-        }
-    }
-
     private func setupAction() {
         okButton.tapAction = { [weak self] in
-            self?.finishEditing()
-
+            self?.viewModel.finishEditing()
         }
-    }
-
-    private func finishEditing() {
-        self.delegate.scheduleDidUpdate(schedule: self.schedule)
-        self.coordinator.pop()
     }
 
     private func layout() {
@@ -97,19 +78,16 @@ final class ScheduleViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension ScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        week.count
+        viewModel.numberOfRowsInSection
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.identifier, for: indexPath) as! ScheduleTableViewCell
-        let day = week[indexPath.row]
-        let isOn = schedule.firstIndex(of: day) != nil
-        cell.configure(title: day.rawValue, isOn: isOn)
-        cell.buttonAction = { [weak self] isOn in
-            guard let self = self else { return }
 
-            let dayChange = self.week[indexPath.row]
-            self.updateSchedule(for: dayChange, with: isOn)
+        let cellModel = viewModel.fetchViewModelForCell(with: indexPath)
+        cell.configure(cellModel: cellModel)
+        cell.buttonAction = { [weak self] isOn in
+            self?.viewModel.updateSchedule(cell: indexPath, status: isOn)
         }
         return cell
     }

@@ -12,5 +12,5 @@ protocol TrackerDataStore {
     var managedObjectContext: NSManagedObjectContext { get }
     func trackersIsEmpty() -> Bool
     func saveTracker(_ tracker: Tracker, titleCategory: String)
-    func deleteTracker(_ tracker: Tracker)
+    func deleteTracker(_ tracker: TrackerCoreData)
 }

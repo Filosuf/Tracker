@@ -45,9 +45,9 @@ final class ScheduleTableViewCell: UITableViewCell {
         buttonAction?(switchButton.isOn)
     }
 
-    func configure(title: String, isOn: Bool) {
-        label.text = title
-        switchButton.isOn = isOn
+    func configure(cellModel: ScheduleCellModel) {
+        label.text = cellModel.title
+        switchButton.isOn = cellModel.isSetCheckmark
     }
 
     private func layout() {

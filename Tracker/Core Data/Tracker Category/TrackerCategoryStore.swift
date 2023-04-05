@@ -91,8 +91,8 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
     }
 
     func deleteCategory(at indexPath: IndexPath)  {
-//        let record = fetchedResultsController.object(at: indexPath)
-//        try? dataStore.delete(record)
+        let category = fetchedResultsController.object(at: indexPath)
+        dataStore.delete(category)
     }
 }
 

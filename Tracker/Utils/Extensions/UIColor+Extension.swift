@@ -16,6 +16,7 @@ extension UIColor {
         static var gray: UIColor? { UIColor(named: "gray") }
         static var blue: UIColor? { UIColor(named: "blue") }
         static var red: UIColor? { UIColor(named: "red") }
+        static var orange: UIColor? { UIColor(named: "orange") }
 
         static var emojiSelected: UIColor? { UIColor(named: "emojiSelected") }
     }

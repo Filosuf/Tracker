@@ -21,10 +21,12 @@ final class ViewControllersFactory {
     }
 
     func makeTrackerSettingsViewController(coordinator: SettingsFlowCoordinator,
+                                           trackerStore: TrackerStoreProtocol,
                                            trackerStyle: TrackerStyle,
-                                           trackerStore: TrackerStoreProtocol
+                                           indexPathEditTracker: IndexPath?
     ) -> TrackerSettingsViewController {
-        let viewController = TrackerSettingsViewController(coordinator: coordinator, trackerStyle: trackerStyle, trackerStore: trackerStore)
+        let viewModel = TrackerSettingsViewModelImpl(coordinator: coordinator, trackerStore: trackerStore, trackerStyle: trackerStyle, indexPathEditTracker: indexPathEditTracker)
+        let viewController = TrackerSettingsViewController(viewModel: viewModel)
         return viewController
     }
 
@@ -40,7 +42,8 @@ final class ViewControllersFactory {
     }
 
     func makeScheduleViewController(coordinator: SettingsFlowCoordinator, schedule: [DayOfWeek], delegate: ScheduleViewControllerProtocol) -> ScheduleViewController {
-        let viewController = ScheduleViewController(coordinator: coordinator, schedule: schedule, delegate: delegate)
+        let viewModel = ScheduleViewModelImpl(coordinator: coordinator, schedule: schedule, delegate: delegate)
+        let viewController = ScheduleViewController(viewModel: viewModel)
         return viewController
     }
 

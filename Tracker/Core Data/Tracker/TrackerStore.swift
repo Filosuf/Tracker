@@ -22,7 +22,9 @@ protocol TrackerStoreProtocol {
     func updatePredicate(searchText: String?, dayOfWeek: String?)
     func numberOfRowsInSection(_ section: Int) -> Int
     func sectionTitle(for section: Int) -> String
-    func object(at: IndexPath) -> (Tracker?, [TrackerRecord])
+    func object(at: IndexPath) -> Tracker?
+    func records(at indexPath: IndexPath) -> [TrackerRecord]
+    func category(at indexPath: IndexPath) -> TrackerCategory?
     func trackersIsEmpty() -> Bool
     func saveTracker(_ tracker: Tracker, titleCategory: String)
     func deleteTracker(at indexPath: IndexPath)
@@ -94,12 +96,24 @@ extension TrackerStore: TrackerStoreProtocol {
         return currentSection?.name ?? ""
     }
     
-    func object(at indexPath: IndexPath) -> (Tracker?, [TrackerRecord]) {
+    func object(at indexPath: IndexPath) -> Tracker? {
         let trackerCoreData = fetchedResultsController.object(at: indexPath)
         let tracker = trackerCoreData.toTracker()
+        return tracker
+    }
+
+    func records(at indexPath: IndexPath) -> [TrackerRecord] {
+        let trackerCoreData = fetchedResultsController.object(at: indexPath)
         let recordsOptional = trackerCoreData.recordSorted.map { $0.toTrackerRecord() }
         let records = recordsOptional.compactMap { $0 }
-        return (tracker, records)
+        return records
+    }
+
+    func category(at indexPath: IndexPath) -> TrackerCategory? {
+        let trackerCoreData = fetchedResultsController.object(at: indexPath)
+        guard let title = trackerCoreData.category?.title else { return nil }
+        let category = TrackerCategory(title: title, trackers: [])
+        return category
     }
 
     func trackersIsEmpty() -> Bool {
@@ -111,7 +125,8 @@ extension TrackerStore: TrackerStoreProtocol {
     }
 
     func deleteTracker(at indexPath: IndexPath) {
-
+        let trackerCoreData = fetchedResultsController.object(at: indexPath)
+        dataStore.deleteTracker(trackerCoreData)
     }
 }
 
