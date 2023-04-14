@@ -25,9 +25,10 @@ final class CategoriesViewController: UIViewController {
     private let infoLabel: UILabel = {
         let label = UILabel()
         label.text = """
-                Привычки и события можно
-                объединить по смыслу
-                """
+        categories
+        placeholder title
+
+        """.localized
         label.textColor = .black
         label.font = UIFont.systemFont(ofSize: 12)
         label.numberOfLines = 2
@@ -48,7 +49,7 @@ final class CategoriesViewController: UIViewController {
         return tableView
     }()
 
-    private let addCategoryButton = CustomButton(title: "Добавить категорию")
+    private let addCategoryButton = CustomButton(title: "addCategory".localized)
     
     // MARK: - Initialiser
     init(viewModel: CategoriesViewModel) {
@@ -73,7 +74,7 @@ final class CategoriesViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        title = "Категория"
+        title = "categoriesTitle".localized
         categoriesTableView.reloadData()
     }
 
@@ -176,10 +177,10 @@ extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { actions in
             return UIMenu(children: [
-                UIAction(title: "Редактировать") { [weak self] _ in
+                UIAction(title: "edit".localized) { [weak self] _ in
                     self?.viewModel.editCategory(indexPath: indexPath)
                 },
-                UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+                UIAction(title: "delete".localized, attributes: .destructive) { [weak self] _ in
                     self?.viewModel.deleteCategory(indexPath: indexPath)
                 },
             ])

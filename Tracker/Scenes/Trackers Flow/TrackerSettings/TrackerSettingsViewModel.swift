@@ -241,7 +241,7 @@ final class TrackerSettingsViewModelImpl: TrackerSettingsViewModel {
     }
 
     private func scheduleToString(_ schedule: [DayOfWeek]) -> String {
-        guard schedule.count != DayOfWeek.allCases.count else { return "Каждый день" }
+        guard schedule.count != DayOfWeek.allCases.count else { return "everyDay".localized }
 
         let scheduleSorted = schedule.sorted()
         let scheduleShortName = scheduleSorted.map { $0.shortName }.joined(separator: ", ")

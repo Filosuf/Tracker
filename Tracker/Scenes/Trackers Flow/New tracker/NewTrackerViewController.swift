@@ -11,8 +11,8 @@ final class NewTrackerViewController: UIViewController {
     // MARK: - Properties
     private let coordinator: SettingsFlowCoordinator
 
-    private let newHabitButton = CustomButton(title: "Привычка")
-    private let newEventButton = CustomButton(title: "Нерегулярное событие")
+    private let newHabitButton = CustomButton(title: "habit".localized)
+    private let newEventButton = CustomButton(title: "event".localized)
 
     private let verticalStackView: UIStackView = {
         let stackView = UIStackView()
@@ -34,7 +34,7 @@ final class NewTrackerViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Создание трекера"
+        title = "newTrackerTitle".localized
         view.backgroundColor = .white
         layout()
         setupAction()

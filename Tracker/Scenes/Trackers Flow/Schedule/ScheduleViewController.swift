@@ -15,7 +15,7 @@ final class ScheduleViewController: UIViewController {
     // MARK: - Properties
     private var viewModel: ScheduleViewModel
 
-    private let okButton = CustomButton(title: "Готово")
+    private let okButton = CustomButton(title: "done".localized)
 
     private lazy var weekTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -44,7 +44,7 @@ final class ScheduleViewController: UIViewController {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true
         view.backgroundColor = .white
-        title = "Расписание"
+        title = "scheduleTitle".localized
         setupAction()
         layout()
     }

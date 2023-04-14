@@ -31,7 +31,7 @@ final class TrackersViewController: UIViewController {
 
     private let infoLabel: UILabel = {
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
+        label.text = "trackersEmptyPlaceholderTitle".localized
         label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = .Custom.blackDay
         label.textAlignment = .center
@@ -84,7 +84,7 @@ final class TrackersViewController: UIViewController {
     // MARK: - Methods
     private func setBar() {
         navigationItem.searchController = searchBar
-        navigationItem.title = "Трекеры"
+        navigationItem.title = "trackers".localized
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(addTracker))
         navigationItem.leftBarButtonItem?.tintColor = .Custom.blackDay
@@ -97,13 +97,13 @@ final class TrackersViewController: UIViewController {
             infoLabel.isHidden = false
             infoImage.isHidden = false
             infoImage.image = UIImage(named: "star")
-            infoLabel.text = "Что будем отслеживать?"
+            infoLabel.text = "trackersEmptyPlaceholderTitle".localized
         } else if trackerStore.numberOfSections == 0 {
             trackerCollectionView.isHidden = true
             infoLabel.isHidden = false
             infoImage.isHidden = false
             infoImage.image = UIImage(named: "findError")
-            infoLabel.text = "Ничего не найдено на выбранную дату"
+            infoLabel.text = "trackersNoFindPlaceholderTitle".localized
         } else {
             trackerCollectionView.isHidden = false
             infoLabel.isHidden = true
@@ -256,13 +256,13 @@ extension TrackersViewController: UICollectionViewDelegate {
             return customView
         }) { actions in
                 return UIMenu(children: [
-                    UIAction(title: "Закрепить") { [weak self] _ in
+                    UIAction(title: "pin".localized) { [weak self] _ in
 //                        self?.makeBold(indexPath: indexPath)
                     },
-                    UIAction(title: "Редактировать") { [weak self] _ in
+                    UIAction(title: "edit".localized) { [weak self] _ in
                         self?.editTacker(indexPath: indexPath)
                     },
-                    UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+                    UIAction(title: "delete".localized, attributes: .destructive) { [weak self] _ in
                         self?.deleteTracker(indexPath: indexPath)
                     },
                 ])

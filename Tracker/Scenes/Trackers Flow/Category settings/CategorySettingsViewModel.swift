@@ -64,9 +64,9 @@ final class CategorySettingsViewModel {
         }
 
         if isNotAvailable {
-            warningText = "Имя категории уже используется"
+            warningText = "categoryWarningDuplicateName".localized
         } else if Array(title).count > Constants.maxTitleLength {
-            warningText = "Ограничение \(Constants.maxTitleLength) символов"
+            warningText = "categoryWarningLengthName".localized
         } else {
             warningText = ""
         }

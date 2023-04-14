@@ -8,8 +8,8 @@
 import UIKit
 
 enum SettingsType: String {
-    case category = "Категория"
-    case schedule = "Расписание"
+    case category
+    case schedule
 }
 
 final class TrackerSettingsViewController: UIViewController {
@@ -43,7 +43,6 @@ final class TrackerSettingsViewController: UIViewController {
         label.textColor = .Custom.blackDay
         label.font = UIFont.boldSystemFont(ofSize: 32)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "5 days"
         return label
     }()
 
@@ -110,7 +109,7 @@ final class TrackerSettingsViewController: UIViewController {
         label.textColor = .Custom.blackDay
         label.font = UIFont.boldSystemFont(ofSize: 19)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Emoji"
+        label.text = "emoji".localized
         return label
     }()
 
@@ -131,7 +130,7 @@ final class TrackerSettingsViewController: UIViewController {
         label.textColor = .Custom.blackDay
         label.font = UIFont.boldSystemFont(ofSize: 19)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Цвет"
+        label.text = "color".localized
         return label
     }()
 
@@ -243,40 +242,40 @@ final class TrackerSettingsViewController: UIViewController {
     private func setupView() {
         switch viewModel.trackerStyle {
         case .newHabit:
-            title = "Новая привычка"
+            title = "newHabit".localized
             numberOfDayLabel.isHidden = true
             minusButton.isHidden = true
             plusButton.isHidden = true
             nameTextFieldTop = 0
             nameSettingsArray = [.category, .schedule]
-            saveButton.updateButton(title: "Создать", backgroundColor: .Custom.gray)
+            saveButton.updateButton(title: "create".localized, backgroundColor: .Custom.gray)
             saveButton.isEnabled = false
         case .newEvent:
-            title = "Новое нерегулярное событие"
+            title = "newEvent".localized
             numberOfDayLabel.isHidden = true
             minusButton.isHidden = true
             plusButton.isHidden = true
             nameTextFieldTop = 0
             nameSettingsArray = [.category]
-            saveButton.updateButton(title: "Создать", backgroundColor: .Custom.gray)
+            saveButton.updateButton(title: "create".localized, backgroundColor: .Custom.gray)
             saveButton.isEnabled = false
         case .editHabit:
-            title = "Редактирование привычки"
+            title = "editHabit".localized
             numberOfDayLabel.isHidden = false
             minusButton.isHidden = false
             plusButton.isHidden = false
             nameTextFieldTop = 102
             nameSettingsArray = [.category, .schedule]
-            saveButton.updateButton(title: "Сохранить", backgroundColor: .Custom.blackDay)
+            saveButton.updateButton(title: "save".localized, backgroundColor: .Custom.blackDay)
             saveButton.isEnabled = true
         case .editEvent:
-            title = "Редактирование нерегулярного события"
+            title = "editEvent".localized
             numberOfDayLabel.isHidden = false
             minusButton.isHidden = false
             plusButton.isHidden = false
             nameTextFieldTop = 102
             nameSettingsArray = [.category]
-            saveButton.updateButton(title: "Сохранить", backgroundColor: .Custom.blackDay)
+            saveButton.updateButton(title: "save".localized, backgroundColor: .Custom.blackDay)
             saveButton.isEnabled = true
         }
     }
@@ -409,7 +408,7 @@ extension TrackerSettingsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "identifier")
-        cell.textLabel?.text = nameSettingsArray[indexPath.row].rawValue
+        cell.textLabel?.text = nameSettingsArray[indexPath.row].rawValue.localized
         var detailText: String?
         if nameSettingsArray[indexPath.row] == .category {
             detailText = viewModel.trackerCategory?.title
