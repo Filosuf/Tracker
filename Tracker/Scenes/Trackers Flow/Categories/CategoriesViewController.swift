@@ -24,11 +24,12 @@ final class CategoriesViewController: UIViewController {
 
     private let infoLabel: UILabel = {
         let label = UILabel()
-        label.text = """
-        categories
-        placeholder title
-
-        """.localized
+//        label.text = """
+//        categories
+//        placeholder title
+//
+//        """.localized
+        label.text = "categoriesPlaceholderTitle".localized
         label.textColor = .black
         label.font = UIFont.systemFont(ofSize: 12)
         label.numberOfLines = 2

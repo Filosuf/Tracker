@@ -45,17 +45,7 @@ everyDay = "Каждый день";
 
 //MARK: - CategoriesViewController
 categoriesTitle = "Категория";
-"categories
-placeholder title
-" = "Привычки и события можно
-    объединить по смыслу
-";
-
-"Hi,
- I would like to share the following feedback:
-" = "Привычки и события можно
-    объединить по смыслу
-";
+categoriesPlaceholderTitle = "Привычки и события можно\nобъединить по смыслу";
 addCategory = "Добавить категорию";
 
 //MARK: - ScheduleViewController
