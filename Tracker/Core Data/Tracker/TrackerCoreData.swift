@@ -22,6 +22,7 @@ extension TrackerCoreData {
                        name: name ?? "",
                        color: UIColor(hex: color) ?? UIColor.white,
                        emoji: emoji ?? "",
-                       schedule: scheduleArray)
+                       schedule: scheduleArray,
+                       isPinned: isPinned)
     }
 }

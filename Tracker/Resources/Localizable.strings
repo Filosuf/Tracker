@@ -13,6 +13,7 @@ create = "Создать";
 done = "Готово";
 //Cell context menu
 pin = "Закрепить";
+unpinned = "Открепить";
 edit = "Редактировать";
 delete = "Удалить";
 

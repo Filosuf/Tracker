@@ -186,6 +186,7 @@ final class TrackerSettingsViewController: UIViewController {
                 }
             }
             let colorIndexPath = IndexPath(item: colorIndex ?? 0, section: 0)
+            colorCollectionView.selectItem(at: colorIndexPath, animated: true, scrollPosition: .centeredVertically)
 
             var emojiIndex: Int?
             for (index, emoji) in viewModel.emojis.enumerated() {
@@ -195,7 +196,6 @@ final class TrackerSettingsViewController: UIViewController {
             }
             let emojiIndexPath = IndexPath(item: emojiIndex ?? 0, section: 0)
             emojiCollectionView.selectItem(at: emojiIndexPath, animated: true, scrollPosition: .centeredVertically)
-            colorCollectionView.selectItem(at: IndexPath(item: 6, section: 0), animated: true, scrollPosition: .top)
         }
     }
 

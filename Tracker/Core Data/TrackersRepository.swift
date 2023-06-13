@@ -82,6 +82,7 @@ extension TrackersRepository: TrackerDataStore {
         newTracker.color = tracker.color.hexValue
         newTracker.emoji = tracker.emoji
         newTracker.schedule = tracker.schedule.map { $0.rawValue }.joined(separator: " ")
+        newTracker.isPinned = tracker.isPinned
         newTracker.category = trackerCategory
 
         saveContext()

@@ -245,19 +245,16 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
 //MARK: - UICollectionViewDelegate
 extension TrackersViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
-    }
-
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
 
         return UIContextMenuConfiguration(identifier: nil, previewProvider: {
             let customView = self.makePreview(indexPath: indexPath)
             return customView
         }) { actions in
+            let pinTitle = self.trackerIsPinned(indexPath: indexPath) ? "unpinned".localized : "pin".localized
                 return UIMenu(children: [
-                    UIAction(title: "pin".localized) { [weak self] _ in
-//                        self?.makeBold(indexPath: indexPath)
+                    UIAction(title: pinTitle) { [weak self] _ in
+                        self?.trackerPinned(indexPath: indexPath)
                     },
                     UIAction(title: "edit".localized) { [weak self] _ in
                         self?.editTacker(indexPath: indexPath)
@@ -268,6 +265,19 @@ extension TrackersViewController: UICollectionViewDelegate {
                 ])
             }
         }
+
+    private func trackerIsPinned(indexPath: IndexPath) -> Bool {
+        guard let tracker = trackerStore.object(at: indexPath) else { return false}
+        return tracker.isPinned
+    }
+
+    private func trackerPinned(indexPath: IndexPath) {
+        guard let tracker = trackerStore.object(at: indexPath) else { return }
+
+        let category = trackerStore.sectionTitle(for: indexPath.section)
+        let newTracker = Tracker(id: tracker.id, name: tracker.name, color: tracker.color, emoji: tracker.emoji, schedule: tracker.schedule, isPinned: !tracker.isPinned)
+        trackerStore.saveTracker(newTracker, titleCategory: category)
+    }
 
     private func editTacker(indexPath: IndexPath) {
         guard let schedule = trackerStore.object(at: indexPath)?.schedule else { return }
@@ -297,13 +307,6 @@ extension TrackersViewController: TrackerStoreDelegate {
         updateVisibleCategories()
         setupPlaceholder()
         trackerCollectionView.reloadData()
-        //TODO: - Переделать на обновление отдельных ячеек
-//        trackerCollectionView.performBatchUpdates {
-//            let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
-//            let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
-//            trackerCollectionView.insertRows(at: insertedIndexPaths, with: .automatic)
-//            trackerCollectionView.deleteRows(at: deletedIndexPaths, with: .fade)
-//        }
     }
 }
 

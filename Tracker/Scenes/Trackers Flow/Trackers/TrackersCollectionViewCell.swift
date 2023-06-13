@@ -13,12 +13,14 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
 
     var buttonAction: (() -> Void)?
 
-    private let colorView: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 16
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+//    private let colorView: UIView = {
+//        let view = UIView()
+//        view.layer.cornerRadius = 16
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//        return view
+//    }()
+
+    private let colorView = TrackersSubviewCell()
 
     private let emojiLabel: UILabel = {
         let label = UILabel()
@@ -70,14 +72,16 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
 
     // MARK: - Methods
     func setupCell(tracker: Tracker, numberOfMarks: Int, isTodayCompleted: Bool, isHabit: Bool) {
-        nameLabel.text = tracker.name
-        emojiLabel.text = tracker.emoji
+//        nameLabel.text = tracker.name
+//        emojiLabel.text = tracker.emoji
+        colorView.setupView(tracker: tracker)
+
         if isHabit {
             numberOfDayLabel.text = String(format: "day".localized, numberOfMarks)
         } else {
             numberOfDayLabel.text = String(format: "time".localized, numberOfMarks)
         }
-        colorView.backgroundColor = tracker.color
+//        colorView.backgroundColor = tracker.color
 
         if isTodayCompleted {
             plusButton.setTitle("✓", for: .normal)
@@ -95,8 +99,8 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     private func layout() {
         let interval: CGFloat = 12
 
-        [emojiLabel, nameLabel].forEach { colorView.addSubview($0) }
-
+//        [emojiLabel, nameLabel].forEach { colorView.addSubview($0) }
+        colorView.translatesAutoresizingMaskIntoConstraints = false
         [colorView, numberOfDayLabel, plusButton].forEach { contentView.addSubview($0) }
 
         NSLayoutConstraint.activate([
@@ -104,15 +108,16 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             colorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             colorView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -42),
+//
+//            emojiLabel.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: interval),
+//            emojiLabel.topAnchor.constraint(equalTo: colorView.topAnchor, constant: interval),
+//            emojiLabel.heightAnchor.constraint(equalToConstant: 24),
+//            emojiLabel.widthAnchor.constraint(equalToConstant: 24),
+//
+//            nameLabel.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: interval),
+//            nameLabel.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: -interval),
+//            nameLabel.bottomAnchor.constraint(equalTo: colorView.bottomAnchor, constant: -interval),
 
-            emojiLabel.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: interval),
-            emojiLabel.topAnchor.constraint(equalTo: colorView.topAnchor, constant: interval),
-            emojiLabel.heightAnchor.constraint(equalToConstant: 24),
-            emojiLabel.widthAnchor.constraint(equalToConstant: 24),
-
-            nameLabel.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: interval),
-            nameLabel.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: -interval),
-            nameLabel.bottomAnchor.constraint(equalTo: colorView.bottomAnchor, constant: -interval),
 
             numberOfDayLabel.centerYAnchor.constraint(equalTo: plusButton.centerYAnchor),
             numberOfDayLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: interval),

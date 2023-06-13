@@ -36,6 +36,14 @@ final class TrackersSubviewCell: UIView {
         return label
     }()
 
+    private let pinImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "pin")
+        imageView.isHidden = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+
     // MARK: - LifeCycle
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -51,12 +59,13 @@ final class TrackersSubviewCell: UIView {
         nameLabel.text = tracker.name
         emojiLabel.text = tracker.emoji
         colorView.backgroundColor = tracker.color
+        pinImage.isHidden = !tracker.isPinned
     }
 
     private func layout() {
         let interval: CGFloat = 12
 
-        [emojiLabel, nameLabel].forEach { colorView.addSubview($0) }
+        [emojiLabel, nameLabel, pinImage].forEach { colorView.addSubview($0) }
 
         [colorView].forEach { addSubview($0) }
 
@@ -73,7 +82,12 @@ final class TrackersSubviewCell: UIView {
 
             nameLabel.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: interval),
             nameLabel.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: -interval),
-            nameLabel.bottomAnchor.constraint(equalTo: colorView.bottomAnchor, constant: -interval)
+            nameLabel.bottomAnchor.constraint(equalTo: colorView.bottomAnchor, constant: -interval),
+
+            pinImage.topAnchor.constraint(equalTo: colorView.topAnchor, constant: 18),
+            pinImage.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: -12),
+            pinImage.heightAnchor.constraint(equalToConstant: 12),
+            pinImage.widthAnchor.constraint(equalToConstant: 8)
         ])
     }
 }

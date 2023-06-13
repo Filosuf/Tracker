@@ -13,6 +13,7 @@ struct Tracker: Equatable {
     let color: UIColor
     let emoji: String
     let schedule: [DayOfWeek]
+    let isPinned: Bool
 
     static func == (lhs: Tracker, rhs: Tracker) -> Bool {
         lhs.id == rhs.id
@@ -20,5 +21,14 @@ struct Tracker: Equatable {
 
     static func < (lhs: Tracker, rhs: Tracker) -> Bool {
         lhs.name < rhs.name
+    }
+
+    init(id: String, name: String, color: UIColor, emoji: String, schedule: [DayOfWeek], isPinned: Bool = false) {
+        self.id = id
+        self.name = name
+        self.color = color
+        self.emoji = emoji
+        self.schedule = schedule
+        self.isPinned = isPinned
     }
 }
