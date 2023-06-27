@@ -10,8 +10,8 @@ import UIKit
 final class ViewControllersFactory {
 
     //MARK: - Trackers Flow
-    func makeTrackersViewController(coordinator: TrackersFlowCoordinator, trackerStore: TrackerStoreProtocol, recordStore: TrackerRecordStoreProtocol) -> TrackersViewController {
-        let viewController = TrackersViewController(coordinator: coordinator, trackerStore: trackerStore, recordStore: recordStore)
+    func makeTrackersViewController(coordinator: TrackersFlowCoordinator, trackerStore: TrackerStoreProtocol, recordStore: TrackerRecordStoreProtocol, statsStorage: SettingsStorageProtocol) -> TrackersViewController {
+        let viewController = TrackersViewController(coordinator: coordinator, trackerStore: trackerStore, recordStore: recordStore, statsStorage: statsStorage)
         return viewController
     }
 
@@ -57,8 +57,8 @@ final class ViewControllersFactory {
     }
 
     //MARK: - Stats Flow
-    func makeStatsViewController() -> StatsViewController {
-        let viewController = StatsViewController()
+    func makeStatsViewController(statsStorage: SettingsStorageProtocol) -> StatsViewController {
+        let viewController = StatsViewController(statsStorage: statsStorage)
         return viewController
     }
 

@@ -13,6 +13,7 @@ final class TrackersViewController: UIViewController {
     private var coordinator: TrackersFlowCoordinatorProtocol
     private let trackerStore: TrackerStoreProtocol
     private let recordStore: TrackerRecordStoreProtocol
+    private let statsStorage: SettingsStorageProtocol
     private var currentDate = Date()
     private var textOfSearchQuery = ""
 
@@ -61,10 +62,11 @@ final class TrackersViewController: UIViewController {
     }()
 
     // MARK: - Initialiser
-    init(coordinator: TrackersFlowCoordinatorProtocol, trackerStore: TrackerStoreProtocol, recordStore: TrackerRecordStoreProtocol) {
+    init(coordinator: TrackersFlowCoordinatorProtocol, trackerStore: TrackerStoreProtocol, recordStore: TrackerRecordStoreProtocol, statsStorage: SettingsStorageProtocol) {
         self.coordinator = coordinator
         self.trackerStore = trackerStore
         self.recordStore = recordStore
+        self.statsStorage = statsStorage
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -168,10 +170,13 @@ final class TrackersViewController: UIViewController {
         guard let records = recordStore.fetchRecords(trackerId: tracker.id) else { return }
 
         let isTodayCompleted = records.contains(where: { $0.date == currentDate })
+        let numberOfCompletedTrackers = statsStorage.numberOfCompletedTrackers
         if isTodayCompleted {
             recordStore.deleteRecord(trackerId: tracker.id, date: currentDate)
+            statsStorage.updateCompletedTrackers(numberOfCompletedTrackers - 1)
         } else {
             recordStore.addRecord(trackerId: tracker.id, date: currentDate)
+            statsStorage.updateCompletedTrackers(numberOfCompletedTrackers + 1)
         }
     }
 }

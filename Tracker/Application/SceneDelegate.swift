@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let dataStore = TrackersRepository()
         let controllersFactory = ViewControllersFactory()
         let dataStoreFactory = DataStoreFactory(dataStore: dataStore)
-        let mainCoordinator: MainCoordinator = MainCoordinatorImp(controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory)
+        let mainCoordinator: MainCoordinator = MainCoordinatorImp(controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory, settingsStorage: settingsStorage)
     
         window?.rootViewController = mainCoordinator.startApplication(skipOnboarding: settingsStorage.skipOnboarding)
         window?.makeKeyAndVisible()
