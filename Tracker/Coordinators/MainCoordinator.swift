@@ -58,7 +58,7 @@ final class MainCoordinatorImp: MainCoordinator {
 
         switch page {
         case .trackers:
-            let trackerChildCoordinator = TrackersFlowCoordinator(navCon: navigationVC, controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory)
+            let trackerChildCoordinator = TrackersFlowCoordinator(navCon: navigationVC, controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory, settingsStorage: settingsStorage)
             let trackerStore = dataStoreFactory.makeTrackerStore()
             let _ = dataStoreFactory.makeTrackerCategoryStore()
             let recordStore = dataStoreFactory.makeTrackerRecordsStore()

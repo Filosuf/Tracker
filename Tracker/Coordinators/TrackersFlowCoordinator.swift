@@ -11,6 +11,7 @@ protocol TrackersFlowCoordinatorProtocol {
     func showNewTracker()
     func showTrackerSettings(trackerStyle: TrackerStyle, indexPathEditTracker: IndexPath?)
     func showDeleteAlert(action: @escaping () -> Void)
+    func showFilters(delegate: FiltersViewControllerDelegate)
 }
 
 
@@ -20,14 +21,14 @@ final class TrackersFlowCoordinator: TrackersFlowCoordinatorProtocol {
     private let navCon: UINavigationController
     private let controllersFactory: ViewControllersFactory
     private let dataStoreFactory: DataStoreFactory
-//    private let newNavCon = UINavigationController()
-//    private lazy var settingsFlowCoordinator = SettingsFlowCoordinator(navCon: newNavCon, controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory)
+    private let settingsStorage: SettingsStorageProtocol
 
     //MARK: - Initialiser
-    init(navCon: UINavigationController, controllersFactory: ViewControllersFactory, dataStoreFactory: DataStoreFactory) {
+    init(navCon: UINavigationController, controllersFactory: ViewControllersFactory, dataStoreFactory: DataStoreFactory, settingsStorage: SettingsStorageProtocol) {
         self.navCon = navCon
         self.controllersFactory = controllersFactory
         self.dataStoreFactory = dataStoreFactory
+        self.settingsStorage = settingsStorage
     }
 
     // MARK: - Methods
@@ -44,6 +45,13 @@ final class TrackersFlowCoordinator: TrackersFlowCoordinatorProtocol {
         let settingsFlowCoordinator = SettingsFlowCoordinator(navCon: newNavCon, controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory)
         let trackerStore = dataStoreFactory.makeTrackerStore()
         let vc = controllersFactory.makeTrackerSettingsViewController(coordinator: settingsFlowCoordinator, trackerStore: trackerStore, trackerStyle: trackerStyle, indexPathEditTracker: indexPathEditTracker)
+        newNavCon.pushViewController(vc, animated: true)
+        navCon.present(newNavCon, animated: true)
+    }
+
+    func showFilters(delegate: FiltersViewControllerDelegate) {
+        let newNavCon = UINavigationController()
+        let vc = FiltersViewController(settingsStorage: settingsStorage, delegate: delegate)
         newNavCon.pushViewController(vc, animated: true)
         navCon.present(newNavCon, animated: true)
     }

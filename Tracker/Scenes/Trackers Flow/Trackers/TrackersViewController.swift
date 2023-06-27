@@ -62,6 +62,18 @@ final class TrackersViewController: UIViewController {
         return datePicker
     }()
 
+    private let filterButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("filters".localized, for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        button.layer.cornerRadius = 16
+        button.backgroundColor = .Custom.blue
+        button.addTarget(self, action: #selector(filter), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     // MARK: - Initialiser
     init(coordinator: TrackersFlowCoordinatorProtocol, trackerStore: TrackerStoreProtocol, recordStore: TrackerRecordStoreProtocol, statsStorage: SettingsStorageProtocol) {
         self.coordinator = coordinator
@@ -132,6 +144,15 @@ final class TrackersViewController: UIViewController {
         }
     }
 
+    @objc private func filter() {
+        coordinator.showFilters(delegate: self)
+        print("event click, item filter")
+        let params : [AnyHashable : Any] = ["event": "click", "screen": "main", "item": "filter"]
+        YMMYandexMetrica.reportEvent("EVENT", parameters: params, onFailure: { error in
+            print("REPORT ERROR: %@", error.localizedDescription)
+        })
+    }
+
     @objc private func addTracker() {
         coordinator.showNewTracker()
         print("event click, item add_track")
@@ -164,13 +185,19 @@ final class TrackersViewController: UIViewController {
     private func layout() {
         [infoImage,
          infoLabel,
-         trackerCollectionView].forEach { view.addSubview($0) }
+         trackerCollectionView,
+         filterButton].forEach { view.addSubview($0) }
 
         NSLayoutConstraint.activate([
             infoImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             infoImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             infoImage.heightAnchor.constraint(equalToConstant: 80),
             infoImage.widthAnchor.constraint(equalToConstant: 80),
+
+            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            filterButton.heightAnchor.constraint(equalToConstant: 50),
+            filterButton.widthAnchor.constraint(equalToConstant: 114),
 
             infoLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             infoLabel.topAnchor.constraint(equalTo: infoImage.bottomAnchor, constant: 8),
@@ -370,5 +397,10 @@ extension TrackersViewController {
 
         return viewController
     }
+}
 
+extension TrackersViewController: FiltersViewControllerDelegate {
+    func filterDidUpdate() {
+        trackerCollectionView.reloadData()
+    }
 }

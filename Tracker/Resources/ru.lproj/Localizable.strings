@@ -60,3 +60,6 @@ categorySettingsEditTitle = "Редактирование категории";
 categorySettingsNameTextFieldPlaceholder = "Введите название категории";
 categoryWarningDuplicateName = "Имя категории уже используется";
 categoryWarningLengthName = "Ограничение 38 символов";
+
+//MARK: - FiltersViewController
+filters = "Фильтры";

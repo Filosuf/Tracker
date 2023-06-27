@@ -25,6 +25,7 @@ final class ScheduleViewController: UIViewController {
         tableView.clipsToBounds = true
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.tableHeaderView = UIView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -98,5 +99,11 @@ extension ScheduleViewController: UITableViewDataSource {
 extension ScheduleViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
+    }
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == DayOfWeek.allCases.count - 1 {
+            cell.separatorInset.left = cell.bounds.size.width
+        }
     }
 }

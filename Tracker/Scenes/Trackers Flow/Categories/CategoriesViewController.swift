@@ -46,6 +46,7 @@ final class CategoriesViewController: UIViewController {
         tableView.clipsToBounds = true
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.tableHeaderView = UIView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -172,6 +173,9 @@ extension CategoriesViewController: UITableViewDelegate {
             cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         } else if isLastCell {
             cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            cell.separatorInset.left = cell.bounds.size.width
+        } else {
+            cell.layer.cornerRadius = 0
         }
     }
 
