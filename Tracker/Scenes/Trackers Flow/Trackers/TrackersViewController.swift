@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import YandexMobileMetrica
 
 final class TrackersViewController: UIViewController {
 
@@ -82,7 +83,25 @@ final class TrackersViewController: UIViewController {
         layout()
         setupPlaceholder()
     }
-    
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print("event open")
+        let params : [AnyHashable : Any] = ["event": "open", "screen": "main"]
+        YMMYandexMetrica.reportEvent("EVENT", parameters: params, onFailure: { error in
+            print("REPORT ERROR: %@", error.localizedDescription)
+        })
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        print("event close")
+        let params : [AnyHashable : Any] = ["event": "close", "screen": "main"]
+        YMMYandexMetrica.reportEvent("EVENT", parameters: params, onFailure: { error in
+            print("REPORT ERROR: %@", error.localizedDescription)
+        })
+    }
+
     // MARK: - Methods
     private func setBar() {
         navigationItem.searchController = searchBar
@@ -115,6 +134,11 @@ final class TrackersViewController: UIViewController {
 
     @objc private func addTracker() {
         coordinator.showNewTracker()
+        print("event click, item add_track")
+        let params : [AnyHashable : Any] = ["event": "click", "screen": "main", "item": "add_track"]
+        YMMYandexMetrica.reportEvent("EVENT", parameters: params, onFailure: { error in
+            print("REPORT ERROR: %@", error.localizedDescription)
+        })
     }
 
     @objc private func handleDatePicker(_ datePicker: UIDatePicker) {
@@ -202,6 +226,11 @@ extension TrackersViewController: UICollectionViewDataSource {
         cell.buttonAction = { [weak self] in
             self?.changeRecord(tracker: tracker)
             collectionView.reloadItems(at: [indexPath])
+            print("event click, item track")
+            let params : [AnyHashable : Any] = ["event": "click", "screen": "main", "item": "track"]
+            YMMYandexMetrica.reportEvent("EVENT", parameters: params, onFailure: { error in
+                print("REPORT ERROR: %@", error.localizedDescription)
+            })
         }
         return cell
     }
@@ -263,9 +292,19 @@ extension TrackersViewController: UICollectionViewDelegate {
                     },
                     UIAction(title: "edit".localized) { [weak self] _ in
                         self?.editTacker(indexPath: indexPath)
+                        print("event click, item edit")
+                        let params : [AnyHashable : Any] = ["event": "click", "screen": "main", "item": "edit"]
+                        YMMYandexMetrica.reportEvent("EVENT", parameters: params, onFailure: { error in
+                            print("REPORT ERROR: %@", error.localizedDescription)
+                        })
                     },
                     UIAction(title: "delete".localized, attributes: .destructive) { [weak self] _ in
                         self?.deleteTracker(indexPath: indexPath)
+                        print("event click, item delete")
+                        let params : [AnyHashable : Any] = ["event": "click", "screen": "main", "item": "delete"]
+                        YMMYandexMetrica.reportEvent("EVENT", parameters: params, onFailure: { error in
+                            print("REPORT ERROR: %@", error.localizedDescription)
+                        })
                     },
                 ])
             }
