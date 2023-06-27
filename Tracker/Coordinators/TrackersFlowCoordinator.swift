@@ -7,7 +7,14 @@
 
 import UIKit
 
-final class TrackersFlowCoordinator {
+protocol TrackersFlowCoordinatorProtocol {
+    func showNewTracker()
+    func showTrackerSettings(trackerStyle: TrackerStyle, indexPathEditTracker: IndexPath?)
+    func showDeleteAlert(action: @escaping () -> Void)
+}
+
+
+final class TrackersFlowCoordinator: TrackersFlowCoordinatorProtocol {
 
     // MARK: - Properties
     private let navCon: UINavigationController

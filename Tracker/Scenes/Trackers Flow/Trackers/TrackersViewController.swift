@@ -10,7 +10,7 @@ import UIKit
 final class TrackersViewController: UIViewController {
 
     // MARK: - Properties
-    private var coordinator: TrackersFlowCoordinator
+    private var coordinator: TrackersFlowCoordinatorProtocol
     private let trackerStore: TrackerStoreProtocol
     private let recordStore: TrackerRecordStoreProtocol
     private var currentDate = Date()
@@ -61,7 +61,7 @@ final class TrackersViewController: UIViewController {
     }()
 
     // MARK: - Initialiser
-    init(coordinator: TrackersFlowCoordinator, trackerStore: TrackerStoreProtocol, recordStore: TrackerRecordStoreProtocol) {
+    init(coordinator: TrackersFlowCoordinatorProtocol, trackerStore: TrackerStoreProtocol, recordStore: TrackerRecordStoreProtocol) {
         self.coordinator = coordinator
         self.trackerStore = trackerStore
         self.recordStore = recordStore
@@ -179,7 +179,7 @@ final class TrackersViewController: UIViewController {
 // MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        trackerStore.numberOfSections
+        return trackerStore.numberOfSections
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -275,8 +275,10 @@ extension TrackersViewController: UICollectionViewDelegate {
         guard let tracker = trackerStore.object(at: indexPath) else { return }
 
         let category = trackerStore.sectionTitle(for: indexPath.section)
-        let newTracker = Tracker(id: tracker.id, name: tracker.name, color: tracker.color, emoji: tracker.emoji, schedule: tracker.schedule, isPinned: !tracker.isPinned)
-        trackerStore.saveTracker(newTracker, titleCategory: category)
+        let categoryBeforePinned = tracker.isPinned ? nil : category
+        let newCategory = tracker.isPinned ? tracker.categoryBeforePinned ?? "" : "pinned"
+        let newTracker = Tracker(id: tracker.id, name: tracker.name, color: tracker.color, emoji: tracker.emoji, schedule: tracker.schedule, isPinned: !tracker.isPinned, categoryBeforePinned: categoryBeforePinned)
+        trackerStore.saveTracker(newTracker, titleCategory: newCategory)
     }
 
     private func editTacker(indexPath: IndexPath) {

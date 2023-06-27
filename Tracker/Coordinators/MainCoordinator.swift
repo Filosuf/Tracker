@@ -58,6 +58,7 @@ final class MainCoordinatorImp: MainCoordinator {
         case .trackers:
             let trackerChildCoordinator = TrackersFlowCoordinator(navCon: navigationVC, controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory)
             let trackerStore = dataStoreFactory.makeTrackerStore()
+            let _ = dataStoreFactory.makeTrackerCategoryStore()
             let recordStore = dataStoreFactory.makeTrackerRecordsStore()
             let trackersVC = controllersFactory.makeTrackersViewController(coordinator: trackerChildCoordinator, trackerStore: trackerStore, recordStore: recordStore)
             // TODO: - не нравится место назначение делегата, поискать другие варианты

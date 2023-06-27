@@ -83,6 +83,7 @@ extension TrackersRepository: TrackerDataStore {
         newTracker.emoji = tracker.emoji
         newTracker.schedule = tracker.schedule.map { $0.rawValue }.joined(separator: " ")
         newTracker.isPinned = tracker.isPinned
+        newTracker.categoryBeforePinned = tracker.categoryBeforePinned
         newTracker.category = trackerCategory
 
         saveContext()

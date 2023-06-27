@@ -17,6 +17,8 @@ unpinned = "Открепить";
 edit = "Редактировать";
 delete = "Удалить";
 
+pinned = "Закрепленные";
+
 //MARK: - Onboarding
 onboardingButtonTitle = "Вот это технологии?";
 onboardingPageFirstTitle = "Отслеживайте только то, что хотите";

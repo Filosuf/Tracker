@@ -58,6 +58,14 @@ final class TrackerCategoryStore: NSObject {
     init(_ dataStore: TrackerCategoryDataStore) {
         self.context = dataStore.managedObjectContext
         self.dataStore = dataStore
+        super.init()
+        self.createPinnedCategory()
+    }
+
+    private func createPinnedCategory() {
+        guard isDuplicateOfCategory(with: "pinned") else { return }
+        let category = TrackerCategory(title: "pinned", trackers: [])
+        addCategory(category)
     }
 }
 

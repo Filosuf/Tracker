@@ -5,6 +5,7 @@
         <relationship name="trackers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TrackerCoreData" inverseName="category" inverseEntity="TrackerCoreData"/>
     </entity>
     <entity name="TrackerCoreData" representedClassName="TrackerCoreData" syncable="YES" codeGenerationType="class">
+        <attribute name="categoryBeforePinned" optional="YES" attributeType="String"/>
         <attribute name="color" optional="YES" attributeType="String"/>
         <attribute name="emoji" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="String"/>
@@ -21,7 +22,7 @@
     </entity>
     <elements>
         <element name="TrackerCategoryCoreData" positionX="-14.6124267578125" positionY="-29.7313232421875" width="128" height="59"/>
-        <element name="TrackerCoreData" positionX="-287.3593139648438" positionY="-119.8329772949219" width="128" height="149"/>
+        <element name="TrackerCoreData" positionX="-287.3593139648438" positionY="-119.8329772949219" width="128" height="164"/>
         <element name="TrackerRecordCoreData" positionX="190.1524658203125" positionY="16.8057861328125" width="128" height="74"/>
     </elements>
 </model>
