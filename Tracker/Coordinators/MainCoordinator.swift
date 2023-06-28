@@ -44,7 +44,7 @@ final class MainCoordinatorImp: MainCoordinator {
     //MARK: - Private methods
     private func getTabBarController() -> UIViewController {
         let tabBarVC = UITabBarController()
-        tabBarVC.tabBar.backgroundColor = .white
+        tabBarVC.tabBar.backgroundColor = .systemBackground
 
         let viewControllers = TabBarPage.allCases.map { getNavController(page: $0) }
         tabBarVC.setViewControllers(viewControllers, animated: true)

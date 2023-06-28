@@ -24,7 +24,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
         window?.rootViewController = mainCoordinator.startApplication(skipOnboarding: settingsStorage.skipOnboarding)
         window?.makeKeyAndVisible()
-        window?.overrideUserInterfaceStyle = .light
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

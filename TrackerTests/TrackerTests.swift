@@ -19,18 +19,44 @@ class TrackerTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testViewController() {
+    func testLightViewController() {
         let coordinator = TrackersFlowCoordinatorPlug()
         let trackerStore = TrackerStorePlug()
         let recordStore = TrackerRecordStorePlug()
-        let vc = TrackersViewController(coordinator: coordinator, trackerStore: trackerStore, recordStore: recordStore) // 1
+        let statsStorage = SettingsStoragePlug()
+        let vc = TrackersViewController(coordinator: coordinator, trackerStore: trackerStore, recordStore: recordStore, statsStorage: statsStorage)
 
-        assertSnapshot(matching: vc, as: .image)                                             // 2
+        assertSnapshot(matching: vc, as: .image(traits: .init(userInterfaceStyle: .light)))
     }
 
+    func testDarkViewController() {
+        let coordinator = TrackersFlowCoordinatorPlug()
+        let trackerStore = TrackerStorePlug()
+        let recordStore = TrackerRecordStorePlug()
+        let statsStorage = SettingsStoragePlug()
+        let vc = TrackersViewController(coordinator: coordinator, trackerStore: trackerStore, recordStore: recordStore, statsStorage: statsStorage)
+
+        assertSnapshot(matching: vc, as: .image(traits: .init(userInterfaceStyle: .dark)))
+    }
+}
+class SettingsStoragePlug: SettingsStorageProtocol {
+
+    var skipOnboarding = true
+
+    var numberOfCompletedTrackers = 2
+
+    var filter: Filter = Filter.all
+
+    func setSkipOnboarding(_ newValue: Bool) { }
+
+    func updateCompletedTrackers(_ newValue: Int) { }
+
+    func saveFilter(_ newValue: Filter) { }
 }
 
 class TrackersFlowCoordinatorPlug: TrackersFlowCoordinatorProtocol {
+    func showFilters(delegate: FiltersViewControllerDelegate) { }
+
     func showNewTracker() { }
 
     func showTrackerSettings(trackerStyle: TrackerStyle, indexPathEditTracker: IndexPath?) { }
