@@ -24,7 +24,6 @@
 		7C4F752A2987C19500406056 /* StatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4F75292987C19500406056 /* StatsViewController.swift */; };
 		7C4F752D2987C21000406056 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4F752C2987C21000406056 /* TrackersViewController.swift */; };
 		7C4F75302987C34B00406056 /* TrackerSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4F752F2987C34B00406056 /* TrackerSettingsViewController.swift */; };
-		7C4F75332987C42200406056 /* ViewControllersFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4F75322987C42200406056 /* ViewControllersFactory.swift */; };
 		7C4F75362987E32C00406056 /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4F75352987E32C00406056 /* MainCoordinator.swift */; };
 		7C4F75382987ECCE00406056 /* TrackersFlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4F75372987ECCE00406056 /* TrackersFlowCoordinator.swift */; };
 		7C4F753B29892AAF00406056 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4F753A29892AAF00406056 /* Tracker.swift */; };
@@ -70,6 +69,7 @@
 		7CF92E842A4AF1E500C1D1C6 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF92E832A4AF1E500C1D1C6 /* UIImage+Extension.swift */; };
 		7CF92E872A4B1EF800C1D1C6 /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF92E862A4B1EF800C1D1C6 /* FiltersViewController.swift */; };
 		7CF92E882A4B813200C1D1C6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7CF92E8A2A4B813200C1D1C6 /* Localizable.strings */; };
+		7CF92E8D2A4DD96B00C1D1C6 /* ViewControllersFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF92E8C2A4DD96B00C1D1C6 /* ViewControllersFactory.swift */; };
 		BCBECE2F7AD4164AF71DA319 /* Pods_TrackerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79FE812A5B016688BE5F52 /* Pods_TrackerTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -105,7 +105,6 @@
 		7C4F75292987C19500406056 /* StatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsViewController.swift; sourceTree = "<group>"; };
 		7C4F752C2987C21000406056 /* TrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewController.swift; sourceTree = "<group>"; };
 		7C4F752F2987C34B00406056 /* TrackerSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerSettingsViewController.swift; sourceTree = "<group>"; };
-		7C4F75322987C42200406056 /* ViewControllersFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ViewControllersFactory.swift; path = /Users/a1234/Desktop/Progects/Yandex/Tracker/Tracker/Utils/Factories/ViewControllersFactory.swift; sourceTree = "<absolute>"; };
 		7C4F75352987E32C00406056 /* MainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
 		7C4F75372987ECCE00406056 /* TrackersFlowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersFlowCoordinator.swift; sourceTree = "<group>"; };
 		7C4F753A29892AAF00406056 /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
@@ -154,6 +153,7 @@
 		7CF92E862A4B1EF800C1D1C6 /* FiltersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
 		7CF92E892A4B813200C1D1C6 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		7CF92E8B2A4B813900C1D1C6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		7CF92E8C2A4DD96B00C1D1C6 /* ViewControllersFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllersFactory.swift; sourceTree = "<group>"; };
 		81C5197245FAD471F664CCA3 /* Pods-TrackerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrackerTests.debug.xcconfig"; path = "Target Support Files/Pods-TrackerTests/Pods-TrackerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		CB79FE812A5B016688BE5F52 /* Pods_TrackerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TrackerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFB54917165C2D9589A8B6A4 /* Pods-TrackerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrackerTests.release.xcconfig"; path = "Target Support Files/Pods-TrackerTests/Pods-TrackerTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -340,7 +340,7 @@
 		7C4F75312987C3E300406056 /* Factories */ = {
 			isa = PBXGroup;
 			children = (
-				7C4F75322987C42200406056 /* ViewControllersFactory.swift */,
+				7CF92E8C2A4DD96B00C1D1C6 /* ViewControllersFactory.swift */,
 				7C66617629E99C740059B755 /* DataStoreFactory.swift */,
 			);
 			path = Factories;
@@ -729,6 +729,7 @@
 				7CC346A629C4510E0067062C /* TrackerDataStore.swift in Sources */,
 				7C4F74EC2986509000406056 /* SceneDelegate.swift in Sources */,
 				7C4F7570299381D500406056 /* CategoriesTableViewCell.swift in Sources */,
+				7CF92E8D2A4DD96B00C1D1C6 /* ViewControllersFactory.swift in Sources */,
 				7C4F75672990F43500406056 /* ScheduleViewController.swift in Sources */,
 				7CB5BE6E29BB24B10047C41F /* Tracker.xcdatamodeld in Sources */,
 				7CF92E842A4AF1E500C1D1C6 /* UIImage+Extension.swift in Sources */,
@@ -743,7 +744,6 @@
 				7C66617729E99C740059B755 /* DataStoreFactory.swift in Sources */,
 				7C4F75422989379700406056 /* NewTrackerViewController.swift in Sources */,
 				7CB5BE3C29B0DCB00047C41F /* EmojiCollectionViewDataSource.swift in Sources */,
-				7C4F75332987C42200406056 /* ViewControllersFactory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

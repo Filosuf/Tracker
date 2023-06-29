@@ -85,5 +85,4 @@ final class ViewControllersFactory {
         let vc = OnboardingViewController(backgroundImage: background, title: title)
         return vc
     }
-
 }
