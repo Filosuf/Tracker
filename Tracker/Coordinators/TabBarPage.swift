@@ -14,9 +14,9 @@ enum TabBarPage: CaseIterable {
     var pageTitle: String {
         switch self {
         case .trackers:
-            return "Трекеры"
+            return "trackers".localized
         case .stats:
-            return "Статистика"
+            return "stats".localized
         }
     }
 

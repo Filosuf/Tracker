@@ -48,14 +48,11 @@ extension TrackersRepository: TrackerCategoryDataStore {
         saveContext()
     }
 
-//    func delete(_ record: NSManagedObject) throws {
-//        try performSync { context in
-//            Result {
-//                context.delete(record)
-//                try context.save()
-//            }
-//        }
-//    }
+    func delete(_ trackerCategory: TrackerCategoryCoreData) {
+        context.delete(trackerCategory)
+        saveContext()
+    }
+
     func isDuplicateOfCategory(with title: String) -> Bool {
         let duplicate = fetchCategory(title: title, context: context)
         return duplicate != nil
@@ -84,7 +81,9 @@ extension TrackersRepository: TrackerDataStore {
         newTracker.name = tracker.name
         newTracker.color = tracker.color.hexValue
         newTracker.emoji = tracker.emoji
-        newTracker.schedule = tracker.schedule.map { $0.rawValue }.joined()
+        newTracker.schedule = tracker.schedule.map { $0.rawValue }.joined(separator: " ")
+        newTracker.isPinned = tracker.isPinned
+        newTracker.categoryBeforePinned = tracker.categoryBeforePinned
         newTracker.category = trackerCategory
 
         saveContext()
@@ -96,8 +95,9 @@ extension TrackersRepository: TrackerDataStore {
         return tracker == nil
     }
 
-    func deleteTracker(_ tracker: Tracker) {
-
+    func deleteTracker(_ tracker: TrackerCoreData) {
+        context.delete(tracker)
+        saveContext()
     }
 
     private func fetchTracker(trackerId: String, context: NSManagedObjectContext) -> TrackerCoreData? {

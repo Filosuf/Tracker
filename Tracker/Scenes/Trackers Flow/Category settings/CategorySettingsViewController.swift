@@ -16,7 +16,7 @@ final class CategorySettingsViewController: UIViewController {
         textField.textColor = .Custom.blackDay
         textField.font = UIFont.systemFont(ofSize: 17)
         textField.backgroundColor = .Custom.actionBackground
-        textField.placeholder = "Введите название категории"
+        textField.placeholder = "categorySettingsNameTextFieldPlaceholder".localized
         textField.layer.cornerRadius = 16
         textField.clearButtonMode = .whileEditing
         textField.leftViewMode = UITextField.ViewMode.always
@@ -37,7 +37,7 @@ final class CategorySettingsViewController: UIViewController {
         return label
     }()
 
-    private let saveButton = CustomButton(title: "Готово")
+    private let saveButton = CustomButton(title: "done".localized)
 
     // MARK: - Initialiser
     init(viewModel: CategorySettingsViewModel) {
@@ -82,11 +82,11 @@ final class CategorySettingsViewController: UIViewController {
     }
 
     private func setupView() {
-        title = "Новая категория"
+        title = "categorySettingsNewTitle".localized
         updateSaveButtonState(isOn: viewModel.savingIsAvailable)
         if let categoryTitle = viewModel.categoryTitle {
             nameTextField.text = categoryTitle
-            title = "Редактирование категории"
+            title = "categorySettingsNewTitle".localized
         }
     }
 

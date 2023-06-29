@@ -53,6 +53,16 @@ final class CategoriesViewModel {
         let cellViewModel = CellModel(title: category.title, isSetCheckmark: isSetCheckmark)
         return cellViewModel
     }
+
+    func editCategory(indexPath: IndexPath) {
+        coordinator.showCategorySettings(indexPathEditCategory: indexPath)
+    }
+
+    func deleteCategory(indexPath: IndexPath) {
+        coordinator.showDeleteAlert { [weak self] in
+            self?.trackerCategoryStore.deleteCategory(at: indexPath)
+        }
+    }
 }
 
 extension CategoriesViewModel: TrackerCategoryStoreDelegate {

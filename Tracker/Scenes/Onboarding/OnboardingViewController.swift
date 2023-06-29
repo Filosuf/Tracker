@@ -9,7 +9,7 @@ import UIKit
 
 final class OnboardingViewController: UIViewController {
     // MARK: - Properties
-    private let buttonTitle = "Вот это технологии"
+    private let buttonTitle = "onboardingButtonTitle".localized
     private let backgroundImage: UIImage?
     private let titleString: String?
 

@@ -22,9 +22,9 @@ final class SettingsFlowCoordinator {
     }
 
     // MARK: - Methods
-    func showTrackerSettings(trackerStyle: TrackerStyle) {
+    func showTrackerSettings(trackerStyle: TrackerStyle, indexPathEditTracker: IndexPath? = nil) {
         let trackerStore = dataStoreFactory.makeTrackerStore()
-        let vc = controllersFactory.makeTrackerSettingsViewController(coordinator: self, trackerStyle: trackerStyle, trackerStore: trackerStore)
+        let vc = controllersFactory.makeTrackerSettingsViewController(coordinator: self, trackerStore: trackerStore, trackerStyle: trackerStyle, indexPathEditTracker: indexPathEditTracker)
         navCon.pushViewController(vc, animated: true)
     }
 
@@ -44,6 +44,26 @@ final class SettingsFlowCoordinator {
         let trackerCategoryStore = dataStoreFactory.makeTrackerCategoryStore()
         let vc = controllersFactory.makeCategorySettingsViewController(coordinator: self, trackerCategoryStore: trackerCategoryStore, indexPathEditCategory: indexPathEditCategory)
         navCon.pushViewController(vc, animated: true)
+    }
+
+    func showDeleteAlert(action: @escaping () -> Void) {
+        let alert = UIAlertController(
+            title: nil,
+            message: "Эта категория точно не нужна?",
+            preferredStyle: .actionSheet)
+
+        alert.view.accessibilityIdentifier = "error_alert"
+
+        let action = UIAlertAction(title: "Удалить", style: .destructive) { _ in
+            action()
+        }
+
+        let cancel = UIAlertAction(title: "Отменить", style: .cancel)
+
+        alert.addAction(action)
+        alert.addAction(cancel)
+
+        navCon.present(alert, animated: true, completion: nil)
     }
 
     func dismissSettings() {

@@ -17,11 +17,13 @@ final class MainCoordinatorImp: MainCoordinator {
     // MARK: - Properties
     private let controllersFactory: ViewControllersFactory
     private let dataStoreFactory: DataStoreFactory
+    private let settingsStorage: SettingsStorageProtocol
 
     // MARK: - LifeCycle
-    init(controllersFactory: ViewControllersFactory, dataStoreFactory: DataStoreFactory) {
+    init(controllersFactory: ViewControllersFactory, dataStoreFactory: DataStoreFactory, settingsStorage: SettingsStorageProtocol) {
         self.controllersFactory = controllersFactory
         self.dataStoreFactory = dataStoreFactory
+        self.settingsStorage = settingsStorage
     }
 
     // MARK: - Methods
@@ -42,7 +44,7 @@ final class MainCoordinatorImp: MainCoordinator {
     //MARK: - Private methods
     private func getTabBarController() -> UIViewController {
         let tabBarVC = UITabBarController()
-        tabBarVC.tabBar.backgroundColor = .white
+        tabBarVC.tabBar.backgroundColor = .systemBackground
 
         let viewControllers = TabBarPage.allCases.map { getNavController(page: $0) }
         tabBarVC.setViewControllers(viewControllers, animated: true)
@@ -56,16 +58,17 @@ final class MainCoordinatorImp: MainCoordinator {
 
         switch page {
         case .trackers:
-            let trackerChildCoordinator = TrackersFlowCoordinator(navCon: navigationVC, controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory)
+            let trackerChildCoordinator = TrackersFlowCoordinator(navCon: navigationVC, controllersFactory: controllersFactory, dataStoreFactory: dataStoreFactory, settingsStorage: settingsStorage)
             let trackerStore = dataStoreFactory.makeTrackerStore()
+            let _ = dataStoreFactory.makeTrackerCategoryStore()
             let recordStore = dataStoreFactory.makeTrackerRecordsStore()
-            let trackersVC = controllersFactory.makeTrackersViewController(coordinator: trackerChildCoordinator, trackerStore: trackerStore, recordStore: recordStore)
+            let trackersVC = controllersFactory.makeTrackersViewController(coordinator: trackerChildCoordinator, trackerStore: trackerStore, recordStore: recordStore, statsStorage: settingsStorage)
             // TODO: - не нравится место назначение делегата, поискать другие варианты
             trackerStore.delegate = trackersVC
             navigationVC.navigationBar.prefersLargeTitles = true
             navigationVC.pushViewController(trackersVC, animated: true)
         case .stats:
-            let statsVC = controllersFactory.makeStatsViewController()
+            let statsVC = controllersFactory.makeStatsViewController(statsStorage: settingsStorage)
             navigationVC.navigationBar.prefersLargeTitles = true
             navigationVC.pushViewController(statsVC, animated: true)
         }

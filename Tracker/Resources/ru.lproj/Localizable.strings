@@ -1,0 +1,65 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Filosuf on 14.04.2023.
+  
+*/
+//MARK: - Common
+//button
+cancel = "Отменить";
+save = "Сохранить";
+create = "Создать";
+done = "Готово";
+//Cell context menu
+pin = "Закрепить";
+unpinned = "Открепить";
+edit = "Редактировать";
+delete = "Удалить";
+
+pinned = "Закрепленные";
+
+//MARK: - Onboarding
+onboardingButtonTitle = "Вот это технологии?";
+onboardingPageFirstTitle = "Отслеживайте только то, что хотите";
+onboardingPageSecondTitle = "Даже если это не литры воды или йога";
+
+//MARK: - TabBar
+trackers = "Трекеры";
+stats = "Статистика";
+//MARK: - Trackers flow
+//MARK: - TrackersViewController
+trackersEmptyPlaceholderTitle = "Что будем отслеживать?";
+trackersNoFindPlaceholderTitle = "Ничего не найдено на выбранную дату";
+
+//MARK: - NewTrackerViewController
+newTrackerTitle = "Создание трекера";
+habit = "Привычка";
+event = "Нерегулярное событие";
+newHabit = "Новая привычка";
+newEvent = "Новое нерегулярное событие";
+editHabit = "Редактирование привычки";
+editEvent = "Редактирование нерегулярного события";
+category = "Категория";
+schedule = "Расписание";
+emoji = "Emoji";
+color = "Цвет";
+everyDay = "Каждый день";
+
+//MARK: - CategoriesViewController
+categoriesTitle = "Категория";
+categoriesPlaceholderTitle = "Привычки и события можно\nобъединить по смыслу";
+addCategory = "Добавить категорию";
+
+//MARK: - ScheduleViewController
+scheduleTitle = "Расписание";
+
+//MARK: - CategorySettingsViewController
+categorySettingsNewTitle = "Новая категория";
+categorySettingsEditTitle = "Редактирование категории";
+categorySettingsNameTextFieldPlaceholder = "Введите название категории";
+categoryWarningDuplicateName = "Имя категории уже используется";
+categoryWarningLengthName = "Ограничение 38 символов";
+
+//MARK: - FiltersViewController
+filters = "Фильтры";

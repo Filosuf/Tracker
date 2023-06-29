@@ -1,0 +1,65 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Filosuf on 14.04.2023.
+  
+*/
+//MARK: - Common
+//button
+cancel = "Cancel";
+save = "Save";
+create = "Create";
+done = "Done";
+//Cell context menu
+pin = "Pin";
+unpinned = "Unpin";
+edit = "Edit";
+delete = "Delete";
+
+pinned = "Pinned";
+
+//MARK: - Onboarding
+onboardingButtonTitle = "Вот это технологии?";
+onboardingPageFirstTitle = "Отслеживайте только то, что хотите";
+onboardingPageSecondTitle = "Даже если это не литры воды или йога";
+
+//MARK: - TabBar
+trackers = "Trackers";
+stats = "Stats";
+//MARK: - Trackers flow
+//MARK: - TrackersViewController
+trackersEmptyPlaceholderTitle = "What we will track?";
+trackersNoFindPlaceholderTitle = "Nothing found on the selected date";
+
+//MARK: - NewTrackerViewController
+newTrackerTitle = "Create tracker";
+habit = "Habit";
+event = "Event";
+newHabit = "New habit";
+newEvent = "New event";
+editHabit = "Edit habit";
+editEvent = "Edit event";
+category = "Category";
+schedule = "Schedule";
+emoji = "Emoji";
+color = "Color";
+everyDay = "everyday";
+
+//MARK: - CategoriesViewController
+categoriesTitle = "Category";
+categoriesPlaceholderTitle = "Привычки и события можно\nобъединить по смыслу";
+addCategory = "Add category";
+
+//MARK: - ScheduleViewController
+scheduleTitle = "Schedule";
+
+//MARK: - CategorySettingsViewController
+categorySettingsNewTitle = "New category";
+categorySettingsEditTitle = "Edit category";
+categorySettingsNameTextFieldPlaceholder = "Enter category name";
+categoryWarningDuplicateName = "Warning Duplicate Name";
+categoryWarningLengthName = "Limit of 38 characters";
+
+//MARK: - FiltersViewController
+filters = "Filters";
